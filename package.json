@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
+    "node-artifact-api": "^0.4.2",
     "simple-vdf": "^1.1.1",
     "vue": "^2.5.22",
     "vue-router": "^3.0.1",
