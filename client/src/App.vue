@@ -1,11 +1,28 @@
 <template>
   <div id="app">
-      <div>
-        <router-link to="/foo">Go to Foo</router-link>
-        <br />
-        <router-link to="/bar">Go to Bar</router-link>
-      </div>
-      <router-view></router-view>
+    <Layout>
+      <Header>
+        <Menu mode="horizontal" theme="dark" active-name="home">
+          <MenuItem name="home">
+            <router-link to="/">Home</router-link>
+          </MenuItem>
+          <MenuItem name="build">
+            <router-link to="/build">Build</router-link>
+          </MenuItem>
+          <MenuItem name="about">
+            <router-link to="/about">About</router-link>
+          </MenuItem>
+        </Menu>
+      </Header>
+      <Content>
+        <router-view></router-view>
+      </Content>
+      <Footer>
+        <div class="">
+          © 2019 - High Ground Vision
+        </div>
+      </Footer>
+    </Layout>
   </div>
 </template>
 
@@ -15,4 +32,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.ivu-layout-content {
+  padding: 25px 50px;
+}
+</style>
