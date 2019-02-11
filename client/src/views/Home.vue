@@ -1,11 +1,11 @@
 <template>
   <div class="home">
-    <b-alert variant="dark" show>Welcome to Home</b-alert>
+     <h1>This is an home page</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: "home"
+  name: "home",
 };
 </script>
