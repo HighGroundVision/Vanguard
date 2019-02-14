@@ -4,18 +4,24 @@
       <Header class="layout-header-bar">
         <Menu mode="horizontal" theme="light" active-name="home">
           <MenuItem name="home">
-            <router-link to="/">Home</router-link>
+            <RouterLink to="/">
+              Home
+            </RouterLink>
           </MenuItem>
           <MenuItem name="build">
-            <router-link to="/build">Build</router-link>
+            <RouterLink to="/build">
+              Build
+            </RouterLink>
           </MenuItem>
           <MenuItem name="about">
-            <router-link to="/about">About</router-link>
+            <RouterLink to="/about">
+              About
+            </RouterLink>
           </MenuItem>
         </Menu>
       </Header>
       <Content>
-        <router-view></router-view>
+        <RouterView></RouterView>
       </Content>
       <Footer class="layout-footer-bar">
         <div>
@@ -28,7 +34,7 @@
 
 <script>
 export default {
-  name: "app"
+  name: "App"
 };
 </script>
 

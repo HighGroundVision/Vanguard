@@ -20,14 +20,16 @@
         should generaly not need more then one section.
       </p>
       <br />
-      <Button @click="addSection" type="primary">Add Section</Button>
+      <Button @click="addSection" type="primary">
+        Add Section
+      </Button>
       <Divider dashed />
       <Collapse v-model="options.active_section" accordion>
-        <template v-for="(section, index) in puzzel.sections">
-          <Panel :name="index.toString()" :key="index">
+        <template v-for="(section, skey) in puzzel.sections">
+          <Panel :name="skey.toString()" :key="skey">
             {{ section.name }}
             <Button
-              type="warning"
+              type="error"
               class="float-right"
               @click="removeSection(section.name)"
               >X</Button
@@ -36,34 +38,37 @@
               <div>
                 <h1>Decks</h1>
                 <Row>
-                  <Col span="12">
-                    <span>Player</span>
-                    <br />
+                  <i-col span="12" style="padding: 5px;">
+                    <h2>Player</h2>
                     <RadioGroup
                       v-model="section.decks.player.mode"
                       :vertical="true"
                     >
                       <Radio label="1"
-                        >Supply a deck code for the player to use</Radio
+                        >Supply a deck code for the player to use (optional: the order the deck is drawn in)</Radio
                       >
-                      <Radio label="2">User brings their own deck</Radio>
-                      <Radio label="3" disabled
-                        >The user can pick from one of the following
+                      <Radio label="2"
+                        >The player can pick from one of the following
                         decks</Radio
                       >
+                      <Radio label="3">
+                        The player brings their own deck
+                      </Radio>
                     </RadioGroup>
-                    <Divider dashed />
+                    <br />
                     <div v-if="section.decks.player.mode === '1'">
                       <div>
                         <span>Deck Code</span>
-                        <Input v-model="section.decks.player.deck_code">
+                        <i-input v-model="section.decks.player.deck_code">
                           <Button
                             slot="append"
                             type="primary"
                             @click="loadPlayerDeck"
-                            >Load</Button
-                          >
-                        </Input>
+                            style="width: 100px"
+                            >Load
+                          </Button>
+                        </i-input>
+                        <i-input v-model="section.decks.player.deck_name" disabled ></i-input>
                       </div>
                       <br />
                       <div>
@@ -76,7 +81,7 @@
                       </div>
                       <div>
                         <img
-                          :src="options.selected_image"
+                          :src="options.selected_player_image"
                           class="float-right"
                           style="height: 400px;"
                         />
@@ -91,29 +96,224 @@
                         ></Transfer>
                       </div>
                     </div>
-                    <div v-if="section.decks.player.mode === '3'">
-                      <span>Test</span>
+                    <div v-if="section.decks.player.mode === '2'">
+                      <div>
+                        <span>Deck Code</span>
+                        <i-input v-model="section.decks.player.deck_code">
+                          <Button 
+                            slot="append" 
+                            @click="loadPlayerDeck" 
+                            style="width: 100px"
+                            >Load
+                          </Button>
+                        </i-input>
+                        <i-input v-model="section.decks.player.deck_name">
+                          <Button 
+                            slot="append" 
+                            @click="addPlayerDeck" 
+                            style="width: 100px"
+                            >Add
+                          </Button>
+                        </i-input>
+                      </div>
+                      <br />
+                      <div>
+                        <template v-for="(deck, dKey) in section.decks.player.deck_selection" >
+                          <Card :key="dKey">
+                              <p slot="title">
+                                {{deck.name}}
+                              </p>
+                              <Button slot="extra" type="error" @click="removePlayerDeck(deck.code)">X</Button>
+                              <span>{{deck.code}}</span>
+                          </Card>
+                        </template>
+                      </div>
                     </div>
-                  </Col>
-                  <Col span="12">
-                    <span>Ai</span>
-                    <br />
+                  </i-col>
+                  <i-col span="12" style="padding: 5px;">
+                    <h2>Ai</h2>
                     <RadioGroup
                       v-model="section.decks.ai.mode"
                       :vertical="true"
                     >
                       <Radio label="1"
-                        >Supply a deck code for the Ai to use</Radio
+                        >Supply a deck code for the Ai to use (optional: the order the deck is drawn in)</Radio
                       >
-                      <Radio label="3" disabled
-                        >The user can pick from one of the following
-                        decks</Radio
+                      <Radio label="2"
+                        >The player can pick from one of the following
+                        decks for the Ai</Radio
                       >
+                      <Radio label="3">
+                        The player brings their own deck for the Ai
+                      </Radio>
                     </RadioGroup>
-                  </Col>
+                    <br />
+                    <div v-if="section.decks.ai.mode === '1'">
+                      <div>
+                        <span>Deck Code</span>
+                        <i-input v-model="section.decks.ai.deck_code">
+                          <Button
+                            slot="append"
+                            type="primary"
+                            @click="loadAiDeck"
+                            style="width: 100px"
+                            >Load
+                          </Button>
+                        </i-input>
+                        <br />
+                        <i-input v-model="section.decks.ai.deck_name" disabled ></i-input>
+                      </div>
+                      <br />
+                      <div>
+                        <span>Deck Order</span>
+                        <br />
+                        <small
+                          >You do not need to give a deck order if you want it
+                          to be random.</small
+                        >
+                      </div>
+                      <div>
+                        <img
+                          :src="options.selected_ai_image"
+                          class="float-right"
+                          style="height: 400px;"
+                        />
+                        <Transfer
+                          :data="section.decks.ai.deck_cards"
+                          :target-keys="section.decks.ai.draw_order"
+                          :titles="['Cards in Deck', 'Draw Order']"
+                          :list-style="{ width: '250px', height: '400px' }"
+                          not-found-text="Empty"
+                          @on-change="aiCardOrderChanged"
+                          @on-selected-change="aiCardOrderSeletionChanged"
+                        ></Transfer>
+                      </div>
+                    </div>
+                    <div v-if="section.decks.ai.mode === '2'">
+                      <div>
+                        <span>Deck Code</span>
+                        <i-input v-model="section.decks.ai.deck_code">
+                          <Button 
+                            slot="append" 
+                            @click="loadAiDeck" 
+                            style="width: 100px"
+                            >Load
+                          </Button>
+                        </i-input>
+                        <i-input v-model="section.decks.ai.deck_name">
+                          <Button 
+                            slot="append" 
+                            @click="addAiDeck" 
+                            style="width: 100px"
+                            >Add
+                          </Button>
+                        </i-input>
+                      </div>
+                      <br />
+                      <div>
+                        <template v-for="(deck, dKey) in section.decks.ai.deck_selection" >
+                          <Card :key="dKey">
+                              <p slot="title">
+                                {{deck.name}}
+                              </p>
+                              <Button slot="extra" type="error" @click="removeAiDeck(deck.code)">X</Button>
+                              <span>{{deck.code}}</span>
+                          </Card>
+                        </template>
+                      </div>
+                    </div>
+                  </i-col>
                 </Row>
                 <Divider />
                 <h1>Rules</h1>
+                <div>
+                  <h2>General</h2>
+                  <div>
+                    <Row style="line-height: 32px;">
+                      <i-col span="6">Store Enabled</i-col>
+                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
+                      <i-col span="2">
+                        <i-switch v-model="section.rules.global.store_enabled" />
+                      </i-col>
+                      <i-col span="4" >
+                      </i-col>
+                    </Row>
+                    <Row style="line-height: 32px;">
+                      <i-col span="6">Gold Victory</i-col>
+                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
+                      <i-col span="2">
+                        <i-switch v-model="section.rules.global.gold_victory" />
+                      </i-col>
+                      <i-col span="4" >
+                        <i-input v-if="section.rules.global.gold_victory" v-model="section.rules.global.gold_victory_amount" />
+                      </i-col>
+                    </Row>
+                    <Row style="line-height: 32px;">
+                      <i-col span="6">Units Victory</i-col>
+                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
+                      <i-col span="2">
+                        <i-switch v-model="section.rules.global.units_victory" />
+                      </i-col>
+                      <i-col span="4" >
+                        <i-input v-if="section.rules.global.units_victory" v-model="section.rules.global.units_victory_amount" />
+                      </i-col>
+                    </Row>
+                    <Row style="line-height: 32px;">
+                      <i-col span="6">Kills Victory</i-col>
+                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
+                      <i-col span="2">
+                        <i-switch v-model="section.rules.global.kills_victory" />
+                      </i-col>
+                      <i-col span="4" >
+                        <i-input v-if="section.rules.global.kills_victory" v-model="section.rules.global.kills_victory_amount" />
+                      </i-col>
+                    </Row>
+                   
+                  </div>
+                  <Divider dashed />
+                  <Row>
+                    <i-col span="12" style="padding: 5px;">
+                      <h2>Player</h2>
+                      <div>
+                        <Row style="line-height: 32px;">
+                          <i-col span="6">Initial Heroes</i-col>
+                          <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
+                          <i-col span="2">
+                            &nbsp;
+                          </i-col>
+                          <i-col span="4" >
+                            <i-input v-model="section.rules.player.initial_heroes" />
+                          </i-col>
+                        </Row>
+                      </div>
+                    </i-col>
+                    <i-col span="12" style="padding: 5px;">
+                      <h2>Ai</h2>
+                       <div>
+                        <Row style="line-height: 32px;">
+                          <i-col span="6">Initial Heroes</i-col>
+                          <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
+                          <i-col span="2">
+                            &nbsp;
+                          </i-col>
+                          <i-col span="4" >
+                            <i-input v-model="section.rules.ai.initial_heroes" />
+                          </i-col>
+                        </Row>
+                         <Row style="line-height: 32px;">
+                            <i-col span="6">Pass Chance Multiplier</i-col>
+                            <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
+                            <i-col span="2">
+                              &nbsp;
+                            </i-col>
+                            <i-col span="4" >
+                              <i-input v-model="section.rules.global.ai_pass_chance_multiplier" />
+                            </i-col>
+                          </Row>
+                      </div>
+                    </i-col>
+                  </Row>
+                </div>
                 <Divider />
                 <h1>Sequence</h1>
               </div>
@@ -131,7 +331,7 @@ import * as library from "../assets/cards.json";
 let uuidv4 = require("uuid/v4");
 
 export default {
-  name: "build",
+  name: "Build",
   data() {
     return {
       cards: library.default,
@@ -141,8 +341,9 @@ export default {
         sections: []
       },
       options: {
-        active_section: "0",
-        selected_image: "",
+        active_section: 0,
+        selected_ai_image: "",
+        selected_player_image: "",
         selected_cards: {
           soruce: [],
           target: []
@@ -165,23 +366,55 @@ export default {
           id: id,
           name: "Section " + id,
           rules: {
-            store_enabled: true
+            global: {
+              /*
+              Convert this to array[{
+                key:string, 
+                group:global|player|ai
+                name:string,
+                description:string, 
+                enabled:bool, 
+                valueType:bool|number|string, 
+                defaultValue:bool|number|string, 
+                value:bool|number|string, 
+                canChange:bool
+              }] store in assets and load like cards
+              */
+              store_enabled: true,
+              gold_victory: false,
+              gold_victory_amount: 0,
+              units_victory: false,
+              units_victory_amount: 0,
+              kills_victory: false,
+              kills_victory_amount: 0,
+              ai_pass_chance_multiplier: 50,
+            },
+            player: {
+              initial_heroes: 3,
+            },
+            ai: {
+              initial_heroes: 3,
+            }
           },
           decks: {
             player: {
               mode: 0,
               deck_code:
                 "ADCJdcKJX2kvAFNCQumuwKGsQGUqgGDkagBh4OlAaQDhVtCXSBTZWlnZXI_",
+              deck_name: "",
               deck_cards: [],
               draw_cards: [],
-              draw_order: []
+              draw_order: [],
+              deck_selection: []
             },
             ai: {
               mode: 0,
               deck_code: "",
+              deck_name: "",
               deck_cards: [],
               draw_cards: [],
-              draw_order: []
+              draw_order: [],
+              deck_selection: []
             }
           },
           sequences: []
@@ -200,8 +433,13 @@ export default {
       let index = parseInt(this.options.active_section);
       let section = this.puzzel.sections[index];
       let code = section.decks.player.deck_code;
+      if(!code) {
+        return;
+      }
+
       let deck = decodeDeck(code);
       section.decks.player.deck_cards = [];
+      section.decks.player.deck_name = deck.name;
 
       let cards = [];
       for (const item of deck.heroes) {
@@ -246,11 +484,11 @@ export default {
 
       this.options.selected_cards.soruce = [];
       this.options.selected_cards.target = [];
-      this.options.selected_image = "";
+      this.options.selected_player_image = "";
     },
     playerCardOrderSeletionChanged(sourceSelectedKeys, targetSelectedKeys) {
       if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {
-        this.options.selected_image = "";
+        this.options.selected_player_image = "";
       } else {
         let differenceSource = sourceSelectedKeys.filter(
           x => !this.options.selected_cards.soruce.includes(x)
@@ -269,16 +507,153 @@ export default {
           let item = section.decks.player.deck_cards.filter(function(v) {
             return v.key === key;
           })[0];
-          this.options.selected_image = item.image;
+          this.options.selected_player_image = item.image;
         }
         if (differenceTarget.length > 0) {
           let key = differenceTarget[0];
           let item = section.decks.player.deck_cards.filter(function(v) {
             return v.key === key;
           })[0];
-          this.options.selected_image = item.image;
+          this.options.selected_player_image = item.image;
         }
       }
+    },
+    addPlayerDeck() {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+      let code = section.decks.player.deck_code;
+      let name = section.decks.player.deck_name;
+
+      let results = section.decks.player.deck_selection.filter(function(_) { return _.code === code; }).length === 0;
+      if(code && name && results) {  
+        section.decks.player.deck_selection.push({ 
+          code: code, 
+          name: name
+        });
+
+        section.decks.player.deck_code = "";
+        section.decks.player.deck_name = "";
+      }
+    },
+    removePlayerDeck(code) {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+      section.decks.player.deck_selection = section.decks.player.deck_selection.filter(function(_) {
+        return _.code !== code;
+      });
+    },
+    loadAiDeck() {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+      let code = section.decks.ai.deck_code;
+      if(!code) {
+        return;
+      }
+
+      let deck = decodeDeck(code);
+      section.decks.ai.deck_cards = [];
+      section.decks.ai.deck_name = deck.name;
+
+      let cards = [];
+      for (const item of deck.heroes) {
+        let template = this.cards.filter(function(_) {
+          return _.card_id == item.id;
+        })[0];
+        for (const ref of template.references) {
+          if (ref.ref_type == "includes") {
+            cards.push({ id: ref.card_id, count: ref.count });
+          }
+        }
+      }
+      for (const item of deck.cards) {
+        cards.push({ id: item.id, count: item.count });
+      }
+
+      for (const item of cards) {
+        let template = this.cards.filter(function(_) {
+          return _.card_id == item.id;
+        })[0];
+        for (let i = 0; i < item.count; i++) {
+          let card = {
+            key: uuidv4(),
+            id: template.card_id,
+            label: template.card_name.english,
+            description: template.card_text.english,
+            image: template.large_image.default
+          };
+          section.decks.ai.deck_cards.push(card);
+          section.decks.ai.draw_cards.push(card);
+        }
+      }
+
+      section.decks.ai.deck_cards.sort(function(lhs, rhs) {
+        return lhs.label.localeCompare(rhs.label);
+      });
+    },
+    aiCardOrderChanged(newTargetKeys) {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+      section.decks.ai.draw_order = newTargetKeys;
+
+      this.options.selected_cards.soruce = [];
+      this.options.selected_cards.target = [];
+      this.options.selected_ai_image = "";
+    },
+    aiCardOrderSeletionChanged(sourceSelectedKeys, targetSelectedKeys) {
+      if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {
+        this.options.selected_ai_image = "";
+      } else {
+        let differenceSource = sourceSelectedKeys.filter(
+          x => !this.options.selected_cards.soruce.includes(x)
+        );
+        let differenceTarget = targetSelectedKeys.filter(
+          x => !this.options.selected_cards.target.includes(x)
+        );
+        this.options.selected_cards.soruce = sourceSelectedKeys;
+        this.options.selected_cards.target = targetSelectedKeys;
+
+        let index = parseInt(this.options.active_section);
+        let section = this.puzzel.sections[index];
+
+        if (differenceSource.length > 0) {
+          let key = differenceSource[0];
+          let item = section.decks.ai.deck_cards.filter(function(v) {
+            return v.key === key;
+          })[0];
+          this.options.selected_ai_image = item.image;
+        }
+        if (differenceTarget.length > 0) {
+          let key = differenceTarget[0];
+          let item = section.decks.ai.deck_cards.filter(function(v) {
+            return v.key === key;
+          })[0];
+          this.options.selected_ai_image = item.image;
+        }
+      }
+    },
+    addAiDeck() {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+      let code = section.decks.ai.deck_code;
+      let name = section.decks.ai.deck_name;
+
+      let results = section.decks.ai.deck_selection.filter(function(_) { return _.code === code; }).length === 0;
+      if(code && name && results) {  
+        section.decks.ai.deck_selection.push({ 
+          code: code, 
+          name: name
+        });
+
+        section.decks.ai.deck_code = "";
+        section.decks.ai.deck_name = "";
+      }
+    },
+    removeAiDeck(code) {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+      section.decks.ai.deck_selection = section.decks.ai.deck_selection.filter(function(_) {
+        return _.code !== code;
+      });
     }
   }
 };
@@ -290,3 +665,4 @@ export default {
   margin: 3px;
 }
 </style>
+
