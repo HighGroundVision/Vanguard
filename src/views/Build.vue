@@ -243,7 +243,7 @@
                 
                 <h1>Sequence</h1>
                 <p>
-                  Sequences react to the flow to match. I as for was i can tell thre is not way to control the match, only react to events.
+                  Sequences react to the flow to match. As far as I can tell there is no way to control the match, only react to events.
                 </p>
                 <br />
                 <p>
