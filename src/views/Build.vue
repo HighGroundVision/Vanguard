@@ -4,56 +4,41 @@
   <div class="build">
     <Card>
       <h1>Build Puzzle</h1>
-      <Divider dashed />
+      <Divider dashed/>
       <div>
         <span>Name</span>
         <Input v-model="puzzel.name" />
       </div>
       <div>
         <span>Description</span>
-        <Input v-model="puzzel.description" />
+        <Input v-model="puzzel.description"  />
       </div>
-      <Divider dashed />
+      <Divider dashed/>
+      <Icon type="md-warning" color="#ff9900" size="24"/>WARNING
       <p>
-        <Icon type="md-warning" color="#ff9900" size="24" />WARNING <br />Each
-        Section is handled by Artifact as diferent match. As far as I can tell
-        artifact will lock the user into these matches and they will not be able
-        to continue normal game play until all sections are complete. You should
-        generaly not need more then one section.
+        As far as I can tell artifact will lock the user into these matches and they will not be able to continue normal 
+        game play until all matches are complete. You should generaly not need more then one match.
       </p>
-      <br />
-      <Button type="primary" @click="addSection">Add Section</Button>
-      <Divider dashed />
+      <br>
+      <Button type="primary" @click="addSection">Add Match</Button>
+      <Divider dashed/>
       <Collapse v-model="options.active_section" accordion>
         <template v-for="(section, skey) in puzzel.sections">
           <Panel :key="skey" :name="skey.toString()">
             {{ section.name }}
-            <Button
-              type="error"
-              class="float-right"
-              @click="removeSection(section.name)"
-              >X</Button
-            >
+            <Button type="error" class="float-right" @click="removeSection(section.name)">X</Button>
             <div slot="content">
               <div>
                 <h1>Decks</h1>
                 <Row>
                   <i-col span="12" style="padding: 5px;">
                     <h2>Player</h2>
-                    <RadioGroup
-                      v-model="section.decks.player.mode"
-                      :vertical="true"
-                    >
-                      <Radio label="1">
-                        Supply a deck code for the player to use (optional: the
-                        order the deck is drawn in)
-                      </Radio>
-                      <Radio label="2">
-                        The player can pick from one of the following decks
-                      </Radio>
+                    <RadioGroup v-model="section.decks.player.mode" :vertical="true">
+                      <Radio label="1">Supply a deck code for the player to use (optional: the order the deck is drawn in)</Radio>
+                      <Radio label="2">The player can pick from one of the following decks</Radio>
                       <Radio label="3">The player brings their own deck</Radio>
                     </RadioGroup>
-                    <br />
+                    <br>
                     <div v-if="section.decks.player.mode === '1'">
                       <div>
                         <span>Deck Code</span>
@@ -63,30 +48,21 @@
                             type="primary"
                             style="width: 100px"
                             @click="loadPlayerDeck"
-                            >Load</Button
-                          >
+                          >Load</Button>
                         </i-input>
-                        <br />
-                        <i-input
-                          v-model="section.decks.player.deck_name"
-                          disabled
-                        ></i-input>
+                        <br>
+                        <i-input v-model="section.decks.player.deck_name" disabled></i-input>
                       </div>
-                      <br />
+                      <br>
                       <div>
                         <span>Deck Order</span>
-                        <br />
+                        <br>
                         <small>
-                          You do not need to give a deck order if you want it to
-                          be random.
+                          You do not need to give a deck order if you want it to be random.
                         </small>
                       </div>
                       <div>
-                        <img
-                          :src="options.selected_player_image"
-                          class="float-right"
-                          style="height: 400px;"
-                        />
+                        <img :src="options.selected_player_image" class="float-right" style="height: 400px;">
                         <Transfer
                           :data="section.decks.player.deck_cards"
                           :target-keys="section.decks.player.draw_order"
@@ -102,36 +78,18 @@
                       <div>
                         <span>Deck Code</span>
                         <i-input v-model="section.decks.player.deck_code">
-                          <Button
-                            slot="append"
-                            style="width: 100px"
-                            @click="loadPlayerDeck"
-                            >Load</Button
-                          >
+                          <Button slot="append" style="width: 100px" @click="loadPlayerDeck">Load</Button>
                         </i-input>
                         <i-input v-model="section.decks.player.deck_name">
-                          <Button
-                            slot="append"
-                            style="width: 100px"
-                            @click="addPlayerDeck"
-                            >Add</Button
-                          >
+                          <Button slot="append" style="width: 100px" @click="addPlayerDeck">Add</Button>
                         </i-input>
                       </div>
-                      <br />
+                      <br>
                       <div>
-                        <template
-                          v-for="(deck, dKey) in section.decks.player
-                            .deck_selection"
-                        >
+                        <template v-for="(deck, dKey) in section.decks.player.deck_selection">
                           <Card :key="dKey">
                             <p slot="title">{{ deck.name }}</p>
-                            <Button
-                              slot="extra"
-                              type="error"
-                              @click="removePlayerDeck(deck.code)"
-                              >X</Button
-                            >
+                            <Button slot="extra" type="error" @click="removePlayerDeck(deck.code)">X</Button>
                             <span>{{ deck.code }}</span>
                           </Card>
                         </template>
@@ -140,23 +98,12 @@
                   </i-col>
                   <i-col span="12" style="padding: 5px;">
                     <h2>Ai</h2>
-                    <RadioGroup
-                      v-model="section.decks.ai.mode"
-                      :vertical="true"
-                    >
-                      <Radio label="1">
-                        Supply a deck code for the Ai to use (optional: the
-                        order the deck is drawn in)
-                      </Radio>
-                      <Radio label="2">
-                        The player can pick from one of the following decks for
-                        the Ai
-                      </Radio>
-                      <Radio label="3"
-                        >The player brings their own deck for the Ai</Radio
-                      >
+                    <RadioGroup v-model="section.decks.ai.mode" :vertical="true">
+                      <Radio label="1">Supply a deck code for the Ai to use (optional: the order the deck is drawn in)</Radio>
+                      <Radio label="2">The player can pick from one of the following decks for the Ai</Radio>
+                      <Radio label="3">The player brings their own deck for the Ai</Radio>
                     </RadioGroup>
-                    <br />
+                    <br>
                     <div v-if="section.decks.ai.mode === '1'">
                       <div>
                         <span>Deck Code</span>
@@ -166,30 +113,21 @@
                             type="primary"
                             style="width: 100px"
                             @click="loadAiDeck"
-                            >Load</Button
-                          >
+                          >Load</Button>
                         </i-input>
-                        <br />
-                        <i-input
-                          v-model="section.decks.ai.deck_name"
-                          disabled
-                        ></i-input>
+                        <br>
+                        <i-input v-model="section.decks.ai.deck_name" disabled></i-input>
                       </div>
-                      <br />
+                      <br>
                       <div>
                         <span>Deck Order</span>
-                        <br />
+                        <br>
                         <small>
-                          You do not need to give a deck order if you want it to
-                          be random.
+                          You do not need to give a deck order if you want it to be random.
                         </small>
                       </div>
                       <div>
-                        <img
-                          :src="options.selected_ai_image"
-                          class="float-right"
-                          style="height: 400px;"
-                        />
+                        <img :src="options.selected_ai_image" class="float-right" style="height: 400px;">
                         <Transfer
                           :data="section.decks.ai.deck_cards"
                           :target-keys="section.decks.ai.draw_order"
@@ -205,36 +143,18 @@
                       <div>
                         <span>Deck Code</span>
                         <i-input v-model="section.decks.ai.deck_code">
-                          <Button
-                            slot="append"
-                            style="width: 100px"
-                            @click="loadAiDeck"
-                            >Load</Button
-                          >
+                          <Button slot="append" style="width: 100px" @click="loadAiDeck">Load</Button>
                         </i-input>
                         <i-input v-model="section.decks.ai.deck_name">
-                          <Button
-                            slot="append"
-                            style="width: 100px"
-                            @click="addAiDeck"
-                            >Add</Button
-                          >
+                          <Button slot="append" style="width: 100px" @click="addAiDeck">Add</Button>
                         </i-input>
                       </div>
-                      <br />
+                      <br>
                       <div>
-                        <template
-                          v-for="(deck, dKey) in section.decks.ai
-                            .deck_selection"
-                        >
+                        <template v-for="(deck, dKey) in section.decks.ai.deck_selection">
                           <Card :key="dKey">
                             <p slot="title">{{ deck.name }}</p>
-                            <Button
-                              slot="extra"
-                              type="error"
-                              @click="removeAiDeck(deck.code)"
-                              >X</Button
-                            >
+                            <Button slot="extra" type="error" @click="removeAiDeck(deck.code)">X</Button>
                             <span>{{ deck.code }}</span>
                           </Card>
                         </template>
@@ -242,7 +162,7 @@
                     </div>
                   </i-col>
                 </Row>
-                <Divider />
+                <Divider/>            
                 <h1>Rules</h1>
                 <div>
                   <h2>General</h2>
@@ -257,24 +177,16 @@
                   <template v-for="rule in section.rules.global">
                     <Row :key="rule.key" style="line-height: 32px;">
                       <i-col span="6">{{ rule.name }}</i-col>
-                      <i-col span="12">
-                        {{ rule.description }}
-                      </i-col>
+                      <i-col span="12">{{ rule.description }}</i-col>
                       <i-col span="2">
-                        <i-switch v-model="rule.enabled" />
+                        <i-switch v-model="rule.enabled"/>
                       </i-col>
                       <i-col span="4">
                         <div v-if="rule.valueType == 'bool'">
-                          <i-switch
-                            v-model="rule.value"
-                            :disabled="!rule.enabled"
-                          />
+                          <i-switch v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
                         <div v-if="rule.valueType == 'number'">
-                          <i-input
-                            v-model="rule.value"
-                            :disabled="!rule.enabled"
-                          />
+                          <i-input v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
                         <div v-if="rule.valueType == 'list'">
                           <span>List...</span>
@@ -282,29 +194,21 @@
                       </i-col>
                     </Row>
                   </template>
-                  <Divider dashed />
+                  <Divider dashed/>
                   <h2>Player</h2>
                   <template v-for="rule in section.rules.player">
                     <Row :key="rule.key" style="line-height: 32px;">
                       <i-col span="6">{{ rule.name }}</i-col>
-                      <i-col span="12">
-                        {{ rule.description }}
-                      </i-col>
+                      <i-col span="12">{{ rule.description }}</i-col>
                       <i-col span="2">
-                        <i-switch v-model="rule.enabled" />
+                        <i-switch v-model="rule.enabled"/>
                       </i-col>
                       <i-col span="4">
                         <div v-if="rule.valueType == 'bool'">
-                          <i-switch
-                            v-model="rule.value"
-                            :disabled="!rule.enabled"
-                          />
+                          <i-switch v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
                         <div v-if="rule.valueType == 'number'">
-                          <i-input
-                            v-model="rule.value"
-                            :disabled="!rule.enabled"
-                          />
+                          <i-input v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
                         <div v-if="rule.valueType == 'list'">
                           <span>List...</span>
@@ -312,29 +216,21 @@
                       </i-col>
                     </Row>
                   </template>
-                  <Divider dashed />
+                  <Divider dashed/>
                   <h2>Ai</h2>
                   <template v-for="rule in section.rules.ai">
                     <Row :key="rule.key" style="line-height: 32px;">
                       <i-col span="6">{{ rule.name }}</i-col>
-                      <i-col span="12">
-                        {{ rule.description }}
-                      </i-col>
+                      <i-col span="12">{{ rule.description }}</i-col>
                       <i-col span="2">
-                        <i-switch v-model="rule.enabled" />
+                        <i-switch v-model="rule.enabled"/>
                       </i-col>
                       <i-col span="4">
                         <div v-if="rule.valueType == 'bool'">
-                          <i-switch
-                            v-model="rule.value"
-                            :disabled="!rule.enabled"
-                          />
+                          <i-switch v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
                         <div v-if="rule.valueType == 'number'">
-                          <i-input
-                            v-model="rule.value"
-                            :disabled="!rule.enabled"
-                          />
+                          <i-input v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
                         <div v-if="rule.valueType == 'list'">
                           <span>List...</span>
@@ -343,8 +239,71 @@
                     </Row>
                   </template>
                 </div>
-                <Divider />
+                <Divider/>
+                
                 <h1>Sequence</h1>
+                <p>
+                  Sequences react to the flow to match. I as for was i can tell thre is not way to control the match, only react to events.
+                </p>
+                <br />
+                <p>
+                  Although that being said, you can build a set of Sequences that react to the flow of the game by using the "on next lane" 
+                  event to goto another sequence when the flow moves from one land to the next. This allows you build Sequences that track 
+                  the flow of the match to have reactions on a give turn / lane. To that end I have created the standard and custom flows.
+                </p>
+                <br />
+                
+                <div v-if="section.sequences.length == 0">
+                  <Row>
+                    <i-col span="12" style="padding: 5px;">
+                      <h2>Standard Flow</h2>
+                      <p>
+                        The standard flow will track the match through X turns, allowing you control what happens at the end of the Sequence.
+                      </p>
+                      <br />
+                      <div>
+                        <span>Turns</span>
+                        <br />
+                        <i-input v-model="options.sequence.turns" />
+                      </div>
+                      <br />
+                      <div>
+                        <Button type="primary" @click="addStandardFlow">Add Standard Flow</Button>
+                      </div>
+                    </i-col>
+                    <i-col span="12" style="padding: 5px;">
+                      <h2>Custom Flow</h2>
+                      <p>
+                        The custom flow will require you to control the flow of Sequences, althought more complex to set up allows for more control over the flow of events, allowing puzzels that do not following the standard game flow.
+                      </p>
+                      <br />
+                      <Button type="primary" @click="addCustomFlow">Add Custom Flow</Button>
+                    </i-col>
+                  </Row>
+                </div>
+                <Row>
+                  <template v-for="(sequence) in section.sequences">
+                    <i-col :key="sequence.key" :span="sequence.span">
+                      <Card style="margin: 5px;">
+                        <p slot="title">{{sequence.name}}</p>
+                        <Button slot="extra" type="primary">
+                          <Icon type="md-add" />
+                        </Button>
+                        <!-- Replace with array for events -->
+                        <!-- Replace with array for actions for each event -->
+                        <CellGroup>
+                          <template v-for="(event) in sequence.events">
+                            <Cell :key="event.key" :title="event.name" />
+                          </template>
+                        </CellGroup>
+                      </Card>
+                    </i-col>
+                  </template>
+                </Row>
+                <br />
+                <div v-if="section.sequences.length > 0">
+                  <Button type="error" @click="removeSequence">Remove Sequence</Button>
+                </div>
               </div>
             </div>
           </Panel>
@@ -377,6 +336,9 @@ export default {
         selected_cards: {
           soruce: [],
           target: []
+        },
+        sequence: {
+          turns: 3
         }
       }
     };
@@ -385,18 +347,17 @@ export default {
     addSection() {
       let results = false;
       if (this.puzzel.sections.length > 0) {
-        results = confirm(`Are you sure we wish add more then one section?`);
+        results = confirm(`Are you sure we wish add more then one match?`);
       } else {
         results = true;
       }
 
       if (results) {
         let rules = rulesCollection.default.slice();
-
         var id = this.puzzel.sections.length + 1;
-        this.puzzel.sections.push({
+        let data = {
           id: id,
-          name: "Section " + id,
+          name: "Match " + id,
           decks: {
             player: {
               mode: 0,
@@ -424,16 +385,14 @@ export default {
             ai: rules.filter(_ => _.group == "ai")
           },
           sequences: []
-        });
+        };
+        this.puzzel.sections.push(data);
       }
     },
     removeSection(name) {
-      let results = confirm(`Are you sure we wish to remove ${name} ?`);
-      if (results) {
-        this.puzzel.sections = this.puzzel.sections.filter(function(v) {
-          return v.name != name;
-        });
-      }
+      this.puzzel.sections = this.puzzel.sections.filter(function(v) {
+        return v.name != name;
+      });
     },
     loadPlayerDeck() {
       let index = parseInt(this.options.active_section);
@@ -670,6 +629,88 @@ export default {
           return _.code !== code;
         }
       );
+    },
+    addStandardFlow() {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+
+      let start = {
+        key: `start`,
+        name: `Start`,
+        span: 24,
+        can_remove: false,
+        events: [
+          {
+            name: 'On Enter',
+            key: 'auto',
+            delay: 0,
+            removable: false,
+            actions: [],
+          }
+        ],
+      };
+      section.sequences.push(start);
+
+      for (let t = 1; t <= this.options.sequence.turns; t++) {
+        for (let l = 1; l <= 3; l++) {
+          // let next_turn = (l == 3) ? (t+1) : t;
+          // let next_lane = (l == 3) ? 1 : (l+1);
+          // let at_end = t == this.options.sequence.turns && l === 3;
+
+          let data = {
+            key: `turn${t}lane${l}`,
+            name: `Turn ${t} - Lane ${l}`,
+            span: 8,
+            removable: false,
+            events: [
+                {
+                  name: 'On Next Lane',
+                  key: 'on_next_lane',
+                  delay: 0,
+                  removable: false,
+                  actions: [],
+                }
+            ]
+          };
+          section.sequences.push(data);
+        }
+      }
+
+      let end = {
+        key: `end`,
+        name: `End`,
+        span: 24,
+        removable: false,
+        events: [],
+      };
+      section.sequences.push(end);
+    },
+    addCustomFlow() {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+
+      let start = {
+        key: `start`,
+        name: `Start`,
+        span: 24,
+        removable: false,
+        events: [],
+      };
+      section.sequences.push(start);
+
+      let end = {
+        key: `end`,
+        name: `End`,
+        span: 24,
+        removable: true,
+        events: [],
+      };
+      section.sequences.push(end);
+    },
+    removeSequence() {
+      let index = parseInt(this.options.active_section);
+      let section = this.puzzel.sections[index];
+      section.sequences = [];
     }
   }
 };
