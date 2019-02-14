@@ -1,3 +1,5 @@
+<!-- @format -->
+
 <template>
   <div class="build">
     <Card>
@@ -13,20 +15,18 @@
       </div>
       <Divider dashed />
       <p>
-        <Icon type="md-warning" color="#ff9900" size="24" /> WARNING <br />
-        Each Section is handled by Artifact as diferent match. As far as I can
-        tell artifact will lock the user into these matches and they will not be
-        able to continue normal game play until all sections are complete. You
-        should generaly not need more then one section.
+        <Icon type="md-warning" color="#ff9900" size="24" />WARNING <br />Each
+        Section is handled by Artifact as diferent match. As far as I can tell
+        artifact will lock the user into these matches and they will not be able
+        to continue normal game play until all sections are complete. You should
+        generaly not need more then one section.
       </p>
       <br />
-      <Button @click="addSection" type="primary">
-        Add Section
-      </Button>
+      <Button type="primary" @click="addSection">Add Section</Button>
       <Divider dashed />
       <Collapse v-model="options.active_section" accordion>
         <template v-for="(section, skey) in puzzel.sections">
-          <Panel :name="skey.toString()" :key="skey">
+          <Panel :key="skey" :name="skey.toString()">
             {{ section.name }}
             <Button
               type="error"
@@ -44,16 +44,14 @@
                       v-model="section.decks.player.mode"
                       :vertical="true"
                     >
-                      <Radio label="1"
-                        >Supply a deck code for the player to use (optional: the order the deck is drawn in)</Radio
-                      >
-                      <Radio label="2"
-                        >The player can pick from one of the following
-                        decks</Radio
-                      >
-                      <Radio label="3">
-                        The player brings their own deck
+                      <Radio label="1">
+                        Supply a deck code for the player to use (optional: the
+                        order the deck is drawn in)
                       </Radio>
+                      <Radio label="2">
+                        The player can pick from one of the following decks
+                      </Radio>
+                      <Radio label="3">The player brings their own deck</Radio>
                     </RadioGroup>
                     <br />
                     <div v-if="section.decks.player.mode === '1'">
@@ -63,21 +61,25 @@
                           <Button
                             slot="append"
                             type="primary"
-                            @click="loadPlayerDeck"
                             style="width: 100px"
-                            >Load
-                          </Button>
+                            @click="loadPlayerDeck"
+                            >Load</Button
+                          >
                         </i-input>
-                        <i-input v-model="section.decks.player.deck_name" disabled ></i-input>
+                        <br />
+                        <i-input
+                          v-model="section.decks.player.deck_name"
+                          disabled
+                        ></i-input>
                       </div>
                       <br />
                       <div>
                         <span>Deck Order</span>
                         <br />
-                        <small
-                          >You do not need to give a deck order if you want it
-                          to be random.</small
-                        >
+                        <small>
+                          You do not need to give a deck order if you want it to
+                          be random.
+                        </small>
                       </div>
                       <div>
                         <img
@@ -100,31 +102,37 @@
                       <div>
                         <span>Deck Code</span>
                         <i-input v-model="section.decks.player.deck_code">
-                          <Button 
-                            slot="append" 
-                            @click="loadPlayerDeck" 
+                          <Button
+                            slot="append"
                             style="width: 100px"
-                            >Load
-                          </Button>
+                            @click="loadPlayerDeck"
+                            >Load</Button
+                          >
                         </i-input>
                         <i-input v-model="section.decks.player.deck_name">
-                          <Button 
-                            slot="append" 
-                            @click="addPlayerDeck" 
+                          <Button
+                            slot="append"
                             style="width: 100px"
-                            >Add
-                          </Button>
+                            @click="addPlayerDeck"
+                            >Add</Button
+                          >
                         </i-input>
                       </div>
                       <br />
                       <div>
-                        <template v-for="(deck, dKey) in section.decks.player.deck_selection" >
+                        <template
+                          v-for="(deck, dKey) in section.decks.player
+                            .deck_selection"
+                        >
                           <Card :key="dKey">
-                              <p slot="title">
-                                {{deck.name}}
-                              </p>
-                              <Button slot="extra" type="error" @click="removePlayerDeck(deck.code)">X</Button>
-                              <span>{{deck.code}}</span>
+                            <p slot="title">{{ deck.name }}</p>
+                            <Button
+                              slot="extra"
+                              type="error"
+                              @click="removePlayerDeck(deck.code)"
+                              >X</Button
+                            >
+                            <span>{{ deck.code }}</span>
                           </Card>
                         </template>
                       </div>
@@ -136,16 +144,17 @@
                       v-model="section.decks.ai.mode"
                       :vertical="true"
                     >
-                      <Radio label="1"
-                        >Supply a deck code for the Ai to use (optional: the order the deck is drawn in)</Radio
-                      >
-                      <Radio label="2"
-                        >The player can pick from one of the following
-                        decks for the Ai</Radio
-                      >
-                      <Radio label="3">
-                        The player brings their own deck for the Ai
+                      <Radio label="1">
+                        Supply a deck code for the Ai to use (optional: the
+                        order the deck is drawn in)
                       </Radio>
+                      <Radio label="2">
+                        The player can pick from one of the following decks for
+                        the Ai
+                      </Radio>
+                      <Radio label="3"
+                        >The player brings their own deck for the Ai</Radio
+                      >
                     </RadioGroup>
                     <br />
                     <div v-if="section.decks.ai.mode === '1'">
@@ -155,22 +164,25 @@
                           <Button
                             slot="append"
                             type="primary"
-                            @click="loadAiDeck"
                             style="width: 100px"
-                            >Load
-                          </Button>
+                            @click="loadAiDeck"
+                            >Load</Button
+                          >
                         </i-input>
                         <br />
-                        <i-input v-model="section.decks.ai.deck_name" disabled ></i-input>
+                        <i-input
+                          v-model="section.decks.ai.deck_name"
+                          disabled
+                        ></i-input>
                       </div>
                       <br />
                       <div>
                         <span>Deck Order</span>
                         <br />
-                        <small
-                          >You do not need to give a deck order if you want it
-                          to be random.</small
-                        >
+                        <small>
+                          You do not need to give a deck order if you want it to
+                          be random.
+                        </small>
                       </div>
                       <div>
                         <img
@@ -193,31 +205,37 @@
                       <div>
                         <span>Deck Code</span>
                         <i-input v-model="section.decks.ai.deck_code">
-                          <Button 
-                            slot="append" 
-                            @click="loadAiDeck" 
+                          <Button
+                            slot="append"
                             style="width: 100px"
-                            >Load
-                          </Button>
+                            @click="loadAiDeck"
+                            >Load</Button
+                          >
                         </i-input>
                         <i-input v-model="section.decks.ai.deck_name">
-                          <Button 
-                            slot="append" 
-                            @click="addAiDeck" 
+                          <Button
+                            slot="append"
                             style="width: 100px"
-                            >Add
-                          </Button>
+                            @click="addAiDeck"
+                            >Add</Button
+                          >
                         </i-input>
                       </div>
                       <br />
                       <div>
-                        <template v-for="(deck, dKey) in section.decks.ai.deck_selection" >
+                        <template
+                          v-for="(deck, dKey) in section.decks.ai
+                            .deck_selection"
+                        >
                           <Card :key="dKey">
-                              <p slot="title">
-                                {{deck.name}}
-                              </p>
-                              <Button slot="extra" type="error" @click="removeAiDeck(deck.code)">X</Button>
-                              <span>{{deck.code}}</span>
+                            <p slot="title">{{ deck.name }}</p>
+                            <Button
+                              slot="extra"
+                              type="error"
+                              @click="removeAiDeck(deck.code)"
+                              >X</Button
+                            >
+                            <span>{{ deck.code }}</span>
                           </Card>
                         </template>
                       </div>
@@ -230,89 +248,100 @@
                   <h2>General</h2>
                   <div>
                     <Row style="line-height: 32px;">
-                      <i-col span="6">Store Enabled</i-col>
-                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
-                      <i-col span="2">
-                        <i-switch v-model="section.rules.global.store_enabled" />
-                      </i-col>
-                      <i-col span="4" >
-                      </i-col>
+                      <i-col span="6">Name</i-col>
+                      <i-col span="12">Description</i-col>
+                      <i-col span="2">Enabled</i-col>
+                      <i-col span="4">Value</i-col>
                     </Row>
-                    <Row style="line-height: 32px;">
-                      <i-col span="6">Gold Victory</i-col>
-                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
-                      <i-col span="2">
-                        <i-switch v-model="section.rules.global.gold_victory" />
-                      </i-col>
-                      <i-col span="4" >
-                        <i-input v-if="section.rules.global.gold_victory" v-model="section.rules.global.gold_victory_amount" />
-                      </i-col>
-                    </Row>
-                    <Row style="line-height: 32px;">
-                      <i-col span="6">Units Victory</i-col>
-                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
-                      <i-col span="2">
-                        <i-switch v-model="section.rules.global.units_victory" />
-                      </i-col>
-                      <i-col span="4" >
-                        <i-input v-if="section.rules.global.units_victory" v-model="section.rules.global.units_victory_amount" />
-                      </i-col>
-                    </Row>
-                    <Row style="line-height: 32px;">
-                      <i-col span="6">Kills Victory</i-col>
-                      <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
-                      <i-col span="2">
-                        <i-switch v-model="section.rules.global.kills_victory" />
-                      </i-col>
-                      <i-col span="4" >
-                        <i-input v-if="section.rules.global.kills_victory" v-model="section.rules.global.kills_victory_amount" />
-                      </i-col>
-                    </Row>
-                   
                   </div>
+                  <template v-for="rule in section.rules.global">
+                    <Row :key="rule.key" style="line-height: 32px;">
+                      <i-col span="6">{{ rule.name }}</i-col>
+                      <i-col span="12">
+                        {{ rule.description }}
+                      </i-col>
+                      <i-col span="2">
+                        <i-switch v-model="rule.enabled" />
+                      </i-col>
+                      <i-col span="4">
+                        <div v-if="rule.valueType == 'bool'">
+                          <i-switch
+                            v-model="rule.value"
+                            :disabled="!rule.enabled"
+                          />
+                        </div>
+                        <div v-if="rule.valueType == 'number'">
+                          <i-input
+                            v-model="rule.value"
+                            :disabled="!rule.enabled"
+                          />
+                        </div>
+                        <div v-if="rule.valueType == 'list'">
+                          <span>List...</span>
+                        </div>
+                      </i-col>
+                    </Row>
+                  </template>
                   <Divider dashed />
-                  <Row>
-                    <i-col span="12" style="padding: 5px;">
-                      <h2>Player</h2>
-                      <div>
-                        <Row style="line-height: 32px;">
-                          <i-col span="6">Initial Heroes</i-col>
-                          <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
-                          <i-col span="2">
-                            &nbsp;
-                          </i-col>
-                          <i-col span="4" >
-                            <i-input v-model="section.rules.player.initial_heroes" />
-                          </i-col>
-                        </Row>
-                      </div>
-                    </i-col>
-                    <i-col span="12" style="padding: 5px;">
-                      <h2>Ai</h2>
-                       <div>
-                        <Row style="line-height: 32px;">
-                          <i-col span="6">Initial Heroes</i-col>
-                          <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
-                          <i-col span="2">
-                            &nbsp;
-                          </i-col>
-                          <i-col span="4" >
-                            <i-input v-model="section.rules.ai.initial_heroes" />
-                          </i-col>
-                        </Row>
-                         <Row style="line-height: 32px;">
-                            <i-col span="6">Pass Chance Multiplier</i-col>
-                            <i-col span="12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i-col>
-                            <i-col span="2">
-                              &nbsp;
-                            </i-col>
-                            <i-col span="4" >
-                              <i-input v-model="section.rules.global.ai_pass_chance_multiplier" />
-                            </i-col>
-                          </Row>
-                      </div>
-                    </i-col>
-                  </Row>
+                  <h2>Player</h2>
+                  <template v-for="rule in section.rules.player">
+                    <Row :key="rule.key" style="line-height: 32px;">
+                      <i-col span="6">{{ rule.name }}</i-col>
+                      <i-col span="12">
+                        {{ rule.description }}
+                      </i-col>
+                      <i-col span="2">
+                        <i-switch v-model="rule.enabled" />
+                      </i-col>
+                      <i-col span="4">
+                        <div v-if="rule.valueType == 'bool'">
+                          <i-switch
+                            v-model="rule.value"
+                            :disabled="!rule.enabled"
+                          />
+                        </div>
+                        <div v-if="rule.valueType == 'number'">
+                          <i-input
+                            v-model="rule.value"
+                            :disabled="!rule.enabled"
+                          />
+                        </div>
+                        <div v-if="rule.valueType == 'list'">
+                          <span>List...</span>
+                        </div>
+                      </i-col>
+                    </Row>
+                  </template>
+                  <Divider dashed />
+                  <h2>Ai</h2>
+                  <template v-for="rule in section.rules.ai">
+                    <Row :key="rule.key" style="line-height: 32px;">
+                      <i-col span="6">{{ rule.name }}</i-col>
+                      <i-col span="12">
+                        {{ rule.description }}
+                      </i-col>
+                      <i-col span="2">
+                        <i-switch v-model="rule.enabled" />
+                      </i-col>
+                      <i-col span="4">
+                        <div v-if="rule.valueType == 'bool'">
+                          <i-switch
+                            v-model="rule.value"
+                            :disabled="!rule.enabled"
+                          />
+                        </div>
+                        <div v-if="rule.valueType == 'number'">
+                          <i-input
+                            v-model="rule.value"
+                            :disabled="!rule.enabled"
+                          />
+                        </div>
+                        <div v-if="rule.valueType == 'list'">
+                          <span>List...</span>
+                        </div>
+                      </i-col>
+                    </Row>
+                  </template>
                 </div>
                 <Divider />
                 <h1>Sequence</h1>
@@ -327,21 +356,22 @@
 
 <script>
 import { decodeDeck } from "node-artifact-api";
-import * as library from "../assets/cards.json";
+import * as cardsCollection from "../assets/cards.json";
+import * as rulesCollection from "../assets/rules.json";
 let uuidv4 = require("uuid/v4");
 
 export default {
   name: "Build",
   data() {
     return {
-      cards: library.default,
+      cards: cardsCollection.default,
       puzzel: {
         name: "",
         description: "",
         sections: []
       },
       options: {
-        active_section: 0,
+        active_section: "0",
         selected_ai_image: "",
         selected_player_image: "",
         selected_cards: {
@@ -361,41 +391,12 @@ export default {
       }
 
       if (results) {
+        let rules = rulesCollection.default.slice();
+
         var id = this.puzzel.sections.length + 1;
         this.puzzel.sections.push({
           id: id,
           name: "Section " + id,
-          rules: {
-            global: {
-              /*
-              Convert this to array[{
-                key:string, 
-                group:global|player|ai
-                name:string,
-                description:string, 
-                enabled:bool, 
-                valueType:bool|number|string, 
-                defaultValue:bool|number|string, 
-                value:bool|number|string, 
-                canChange:bool
-              }] store in assets and load like cards
-              */
-              store_enabled: true,
-              gold_victory: false,
-              gold_victory_amount: 0,
-              units_victory: false,
-              units_victory_amount: 0,
-              kills_victory: false,
-              kills_victory_amount: 0,
-              ai_pass_chance_multiplier: 50,
-            },
-            player: {
-              initial_heroes: 3,
-            },
-            ai: {
-              initial_heroes: 3,
-            }
-          },
           decks: {
             player: {
               mode: 0,
@@ -417,6 +418,11 @@ export default {
               deck_selection: []
             }
           },
+          rules: {
+            global: rules.filter(_ => _.group == "global"),
+            player: rules.filter(_ => _.group == "player"),
+            ai: rules.filter(_ => _.group == "ai")
+          },
           sequences: []
         });
       }
@@ -433,7 +439,7 @@ export default {
       let index = parseInt(this.options.active_section);
       let section = this.puzzel.sections[index];
       let code = section.decks.player.deck_code;
-      if(!code) {
+      if (!code) {
         return;
       }
 
@@ -524,10 +530,13 @@ export default {
       let code = section.decks.player.deck_code;
       let name = section.decks.player.deck_name;
 
-      let results = section.decks.player.deck_selection.filter(function(_) { return _.code === code; }).length === 0;
-      if(code && name && results) {  
-        section.decks.player.deck_selection.push({ 
-          code: code, 
+      let results =
+        section.decks.player.deck_selection.filter(function(_) {
+          return _.code === code;
+        }).length === 0;
+      if (code && name && results) {
+        section.decks.player.deck_selection.push({
+          code: code,
           name: name
         });
 
@@ -538,15 +547,17 @@ export default {
     removePlayerDeck(code) {
       let index = parseInt(this.options.active_section);
       let section = this.puzzel.sections[index];
-      section.decks.player.deck_selection = section.decks.player.deck_selection.filter(function(_) {
-        return _.code !== code;
-      });
+      section.decks.player.deck_selection = section.decks.player.deck_selection.filter(
+        function(_) {
+          return _.code !== code;
+        }
+      );
     },
     loadAiDeck() {
       let index = parseInt(this.options.active_section);
       let section = this.puzzel.sections[index];
       let code = section.decks.ai.deck_code;
-      if(!code) {
+      if (!code) {
         return;
       }
 
@@ -637,10 +648,13 @@ export default {
       let code = section.decks.ai.deck_code;
       let name = section.decks.ai.deck_name;
 
-      let results = section.decks.ai.deck_selection.filter(function(_) { return _.code === code; }).length === 0;
-      if(code && name && results) {  
-        section.decks.ai.deck_selection.push({ 
-          code: code, 
+      let results =
+        section.decks.ai.deck_selection.filter(function(_) {
+          return _.code === code;
+        }).length === 0;
+      if (code && name && results) {
+        section.decks.ai.deck_selection.push({
+          code: code,
           name: name
         });
 
@@ -651,9 +665,11 @@ export default {
     removeAiDeck(code) {
       let index = parseInt(this.options.active_section);
       let section = this.puzzel.sections[index];
-      section.decks.ai.deck_selection = section.decks.ai.deck_selection.filter(function(_) {
-        return _.code !== code;
-      });
+      section.decks.ai.deck_selection = section.decks.ai.deck_selection.filter(
+        function(_) {
+          return _.code !== code;
+        }
+      );
     }
   }
 };
@@ -665,4 +681,3 @@ export default {
   margin: 3px;
 }
 </style>
-

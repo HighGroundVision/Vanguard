@@ -1,0 +1,531 @@
+[
+  {
+    "key": "ai_pass_chance_multiplier",
+    "name": "Pass Chance",
+    "description": "multiplier on how likely the AI is to pass",
+    "group": "ai",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+  {
+    "key": "force_combat_manager_rand_to_zero",
+    "name": "Force Flop Order",
+    "description": "force the order that cards flop",
+    "group": "global",
+    "enabled": false,
+    "valueType": "bool",
+    "value": false,
+    "canChange": true
+  },
+  {
+    "key": "ai_action_choice_non_random",
+    "name": "Play Cards In Draw Order",
+    "description": "ai plays their actions in hand order instead of random order",
+    "group": "ai",
+    "enabled": false,
+    "valueType": "bool",
+    "value": false,
+    "canChange": true
+  },
+
+  {
+    "key": "gold_victory",
+    "name": "Gold Victory",
+    "description": "you can win by having this much gold in the bank",
+    "group": "global",
+    "enabled": true,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+  {
+    "key": "units_victory",
+    "name": "Units Victory",
+    "description": "you can win by having this many units in all lanes",
+    "group": "global",
+    "enabled": true,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+  {
+    "key": "kills_victory",
+    "name": "Kills Victory",
+    "description": "you can win by killing this many units",
+    "group": "global",
+    "enabled": true,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+
+  {
+    "key": "store_enabled",
+    "name": "Shopping Enabled",
+    "description": "Is the shop enabled?",
+    "group": "global",
+    "enabled": true,
+    "valueType": "bool",
+    "value":  true,
+    "canChange": true
+  },
+
+  {
+    "key": "no_shotclock",
+    "name": "Enable Shot Clock",
+    "description": "hides the timer around the coin",
+    "group": "global",
+    "enabled": false,
+    "valueType": "bool",
+    "value":  false,
+    "canChange": true
+  },
+  {
+    "key": "shotclock_base_time",
+    "name": "Turn Time Limit",
+    "description": "time limit for each turn",
+    "group": "global",
+    "enabled": true,
+    "valueType": "number",
+    "value":  45,
+    "canChange": true
+  },
+
+  {
+    "key": "initial_heroes",
+    "name": "Initial Heroes",
+    "description": "How many heroes should be deployed at the start of the match",
+    "group": "player",
+    "enabled": true, 
+    "valueType": "number",
+    "value": 3,
+    "canChange": false
+  },
+  {
+    "key": "initial_heroes_ai",
+    "name": "Initial Heroes",
+    "description": "How many heroes should be deployed at the start of the match",
+    "group": "ai",
+    "enabled": true, 
+    "valueType": "number",
+    "value": 3,
+    "canChange": false
+  },
+  {
+    "key": "initial_mana",
+    "name": "Initial Mana",
+    "description": "override the starting mana.",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 3,
+    "canChange": false
+  },
+  {
+    "key": "initial_mana_ai",
+    "name": "Initial Mana",
+    "description": "override the starting mana",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 3,
+    "canChange": false
+  },
+  {
+    "key": "creeps_first_turn",
+    "name": "Initial Creeps",
+    "description": "override the starting number of creeps. This is taken from the Creep List",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 1,
+    "canChange": false
+  },
+  {
+    "key": "creeps_first_turn_ai",
+    "name": "Initial Creeps",
+    "description": "override the starting number of creeps. This is taken from the Creep List",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 1,
+    "canChange": false
+  },
+  {
+    "key": "cards_first_turn",
+    "name": "Initial Draw",
+    "description": "override the starting number of cards",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 5,
+    "canChange": false
+  },
+  {
+    "key": "cards_first_turn_ai",
+    "name": "Initial Draw",
+    "description": "override the starting number of cards",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 5,
+    "canChange": false
+  },
+  {
+    "key": "heroes_initial_lane_random",
+    "name": "Initial Random Hero Deployment",
+    "description": "If disabled then hero lane order will be 1,2,3 from deck instead of random (initial deployment starts in the right lane)",
+    "group": "global",
+    "enabled": true,
+    "valueType": "bool",
+    "value": true,
+    "canChange": false
+  },
+  {
+    "key": "hero1_player",
+    "name": "Initial Hero Lane 1",
+    "description": "Control which hero starts in lane 1. Initial Random Hero Deployment must be disabled for this to work.",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": false
+  },
+  {
+    "key": "hero2_player",
+    "name": "Initial Hero Lane 2",
+    "description": "Control which hero starts in lane 2. Initial Random Hero Deployment must be disabled for this to work.",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": false
+  },
+  {
+    "key": "hero3_player",
+    "name": "Initial Hero Lane 3",
+    "description": "Control which hero starts in lane 3. Initial Random Hero Deployment must be disabled for this to work.",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": false
+  },
+  {
+    "key": "hero1_ai",
+    "name": "Initial Hero Lane 1",
+    "description": "Control which hero starts in lane 1. Initial Random Hero Deployment must be disabled for this to work.",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": false
+  },
+  {
+    "key": "hero2_ai",
+    "name": "Initial Hero Lane 2",
+    "description": "Control which hero starts in lane 2. Initial Random Hero Deployment must be disabled for this to work.",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": false
+  },
+  {
+    "key": "hero3_ai",
+    "name": "Initial Hero Lane 3",
+    "description": "Control which hero starts in lane 3. Initial Random Hero Deployment must be disabled for this to work.",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": false
+  },
+  {
+    "key": "tower1_health",
+    "name": "Lane 1 tower health",
+    "description": "override health for a specific tower",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 40,
+    "canChange": true
+  },
+  {
+    "key": "tower2_health",
+    "name": "Lane 1 tower health",
+    "description": "override health for a specific tower",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 40,
+    "canChange": true
+  },
+  {
+    "key": "tower3_health",
+    "name": "Lane 1 tower health",
+    "description": "override health for a specific tower",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 40,
+    "canChange": true
+  },
+  {
+    "key": "tower1_health_ai",
+    "name": "Lane 1 tower health",
+    "description": "override health for a specific tower",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 40,
+    "canChange": true
+  },
+  {
+    "key": "tower2_health_ai",
+    "name": "Lane 1 tower health",
+    "description": "override health for a specific tower",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 40,
+    "canChange": true
+  },
+  {
+    "key": "tower3_health_ai",
+    "name": "Lane 1 tower health",
+    "description": "override health for a specific tower",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 40,
+    "canChange": true
+  },
+  {
+    "key": "ancient1_health",
+    "name": "Lane 1 ancient health",
+    "description": "override health for a specific ancient",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 80,
+    "canChange": true
+  },
+  {
+    "key": "ancient2_health",
+    "name": "Lane 2 ancient health",
+    "description": "override health for a specific ancient",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 80,
+    "canChange": true
+  },
+  {
+    "key": "ancient3_health",
+    "name": "Lane 3 ancient health",
+    "description": "override health for a specific ancient",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 80,
+    "canChange": true
+  },
+  {
+    "key": "ancient1_health_ai",
+    "name": "Lane 1 ancient health",
+    "description": "override health for a specific ancient",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 80,
+    "canChange": true
+  },
+  {
+    "key": "ancient2_health_ai",
+    "name": "Lane 2 ancient health",
+    "description": "override health for a specific ancient",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 80,
+    "canChange": true
+  },
+  {
+    "key": "ancient3_health_ai",
+    "name": "Lane 3 ancient health",
+    "description": "override health for a specific ancient",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 80,
+    "canChange": true
+  },
+
+  {
+    "key": "creeps_per_turn",
+    "name": "Creeps / Turn",
+    "description": "number of creeps from the Creeps List to deploy",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 3,
+    "canChange": true
+  },
+  {
+    "key": "creeps_per_turn_ai",
+    "name": "Creeps / Turn",
+    "description": "number of creeps from the Creeps List to deploy",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 3,
+    "canChange": true
+  },
+  {
+    "key": "cards_per_turn",
+    "name": "Cards / Turn",
+    "description": "number of cards to draw",
+    "group": "player",
+    "enabled": true,
+    "valueType": "number",
+    "value": 2,
+    "canChange": true
+  },
+  {
+    "key": "cards_per_turn_ai",
+    "name": "Cards / Turn",
+    "description": "number of cards to draw",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "number",
+    "value": 2,
+    "canChange": true
+  },
+  {
+    "key": "gold_per_turn",
+    "name": "Additional Gold / Turn",
+    "description": "...",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+  {
+    "key": "gold_per_turn_ai",
+    "name": "Additional Gold  / Turn",
+    "description": "...",
+    "group": "ai",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+  {
+    "key": "mana_boost_per_turn",
+    "name": "Mana Boost / Turn",
+    "description": "...",
+    "group": "player",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+  {
+    "key": "mana_boost_per_turn_ai",
+    "name": "Mana Boost / Turn",
+    "description": "...",
+    "group": "ai",
+    "enabled": false,
+    "valueType": "number",
+    "value": 0,
+    "canChange": true
+  },
+  {
+    "key": "free_cards_per_turn",
+    "name": "Additional Cards / Turn",
+    "description": "list of cards to draw each turn",
+    "group": "player",
+    "enabled": true,
+    "valueType": "list",
+    "value": [],
+    "canChange": true
+  },
+  {
+    "key": "free_cards_per_turn_ai",
+    "name": "Additional Cards / Turn",
+    "description": "list of cards to draw each turn",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "list",
+    "value": [],
+    "canChange": true
+  },
+
+  {
+    "key": "creeps_lanes_player_1each",
+    "name": "Creep Development Spread",
+    "description": "Tries to spread the creep development evenly to all lanes. Creep Deployment Bunch must be disabled for this to work.",
+    "group": "global",
+    "enabled": true,
+    "valueType": "bool",
+    "value": false,
+    "canChange": true
+  },
+  {
+    "key": "creeps_lanes_random",
+    "name": "Creep Deployment Bunch",
+    "description": "Enabled and all the automatic creeps will bunch toward the left most lane. Creep Development Spread must be disabled for this to work.",
+    "group": "global",
+    "enabled": true,
+    "valueType": "bool",
+    "value": false,
+    "canChange": true
+  },
+  {
+    "key": "only_flop_across_from_heroes",
+    "name": "Creep Deployment Random",
+    "description": "randomly deployed units will always land across from heroes",
+    "group": "global",
+    "enabled": true,
+    "valueType": "bool",
+    "value": false,
+    "canChange": true
+  },
+  {
+    "key": "deploy_heroes_enabled",
+    "name": "Hero Deployment",
+    "description": "disabled to never deploy more heroes",
+    "group": "global",
+    "enabled": true,
+    "valueType": "bool",
+    "value": true,
+    "canChange": true
+  },
+  {
+    "key": "creep_list",
+    "name": "Creep List for Deployment",
+    "description": "list of possible automatic creeps at deployment.",
+    "group": "player",
+    "enabled": true,
+    "valueType": "list",
+    "value": [],
+    "filter": "Creep",
+    "canChange": true
+  },
+  {
+    "key": "creep_list_ai",
+    "name": "Creep List for Deployment",
+    "description": "list of possible automatic creeps at deployment",
+    "group": "ai",
+    "enabled": true,
+    "valueType": "list",
+    "value": [],
+    "filter": "Creep",
+    "canChange": true
+  }
+
+]

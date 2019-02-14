@@ -1,0 +1,25 @@
+version: 1.0.{build}
+pull_requests:
+  do_not_increment_build_number: true
+branches:
+  only:
+  - master
+skip_tags: true
+install:
+- ps: Install-Product node $env:nodejs_version
+build_script:
+- cmd: npm run build
+test: off
+artifacts:
+- path: dist\
+  name: web-app
+deploy:
+- provider: WebDeploy
+  server: https://hgv-vanguard.scm.azurewebsites.net:443/msdeploy.axd?site=hgv-vanguard
+  website: hgv-vanguard
+  username: $hgv-vanguard
+  password:
+    secure: JRAOkvSM+g4cZZ50UzC4Q4LRfz8i9wXQEXc5HReep4q6DLf9RSX5CMi/XEKShNCrG2jVD3kjwA/eGxsG56p4Gw==
+  artifact: web-app
+  remove_files: true
+  app_offline: false
