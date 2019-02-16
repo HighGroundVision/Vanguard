@@ -22,7 +22,7 @@
       <br>
       <Button type="primary" @click="addSection">Add Match</Button>
       <Divider dashed/>
-      <Collapse v-model="options.active_section" accordion>
+      <Collapse v-model="options.section.active" accordion>
         <template v-for="(section, skey) in puzzel.sections">
           <Panel :key="skey" :name="skey.toString()">
             {{ section.name }}
@@ -62,16 +62,11 @@
                         </small>
                       </div>
                       <div>
-                        <img :src="options.selected_player_image" class="float-right" style="height: 400px;">
-                        <Transfer
-                          :data="section.decks.player.deck_cards"
-                          :target-keys="section.decks.player.draw_order"
-                          :titles="['Cards in Deck', 'Draw Order']"
-                          :list-style="{ width: '250px', height: '400px' }"
-                          not-found-text="Empty"
-                          @on-change="playerCardOrderChanged"
-                          @on-selected-change="playerCardOrderSeletionChanged"
-                        ></Transfer>
+                        <CardList 
+                          v-model="section.decks.player.draw_order"
+                          :cards="section.decks.player.deck_cards"
+                          :tiles="['Cards in Deck', 'Draw Order']"
+                        />
                       </div>
                     </div>
                     <div v-if="section.decks.player.mode === '2'">
@@ -127,16 +122,11 @@
                         </small>
                       </div>
                       <div>
-                        <img :src="options.selected_ai_image" class="float-right" style="height: 400px;">
-                        <Transfer
-                          :data="section.decks.ai.deck_cards"
-                          :target-keys="section.decks.ai.draw_order"
-                          :titles="['Cards in Deck', 'Draw Order']"
-                          :list-style="{ width: '250px', height: '400px' }"
-                          not-found-text="Empty"
-                          @on-change="aiCardOrderChanged"
-                          @on-selected-change="aiCardOrderSeletionChanged"
-                        ></Transfer>
+                        <CardList 
+                          v-model="section.decks.ai.draw_order"
+                          :cards="section.decks.ai.deck_cards"
+                          :tiles="['Cards in Deck', 'Draw Order']"
+                        />
                       </div>
                     </div>
                     <div v-if="section.decks.ai.mode === '2'">
@@ -210,8 +200,31 @@
                         <div v-if="rule.valueType == 'number'">
                           <i-input v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
-                        <div v-if="rule.valueType == 'list'">
-                          <span>List...</span>
+                        <div v-if="rule.valueType == 'creep-list'">
+                          <Button @click="rule.open = true" type="primary">Open</Button>
+                          <Modal
+                              v-model="rule.open"
+                              :title="rule.name"
+                              width="900">
+                              <CardList 
+                                v-model="rule.value"
+                                :cards="creeps"
+                                :tiles="['Creeps', 'Deployment']" 
+                              />
+                          </Modal>
+                        </div>
+                        <div v-if="rule.valueType == 'draw-list'">
+                          <Button @click="rule.open = true" type="primary">Open</Button>
+                          <Modal
+                              v-model="rule.open"
+                              :title="rule.name"
+                              width="900">
+                              <CardList 
+                                v-model="rule.value"
+                                :cards="cards"
+                                :tiles="['Cards', 'Draw']" 
+                              />
+                          </Modal>
                         </div>
                       </i-col>
                     </Row>
@@ -232,8 +245,31 @@
                         <div v-if="rule.valueType == 'number'">
                           <i-input v-model="rule.value" :disabled="!rule.enabled"/>
                         </div>
-                        <div v-if="rule.valueType == 'list'">
-                          <span>List...</span>
+                        <div v-if="rule.valueType == 'creep-list'">
+                          <Button @click="rule.open = true" type="primary">Open</Button>
+                          <Modal
+                              v-model="rule.open"
+                              :title="rule.name"
+                              width="900">
+                              <CardList 
+                                v-model="rule.value"
+                                :cards="creeps"
+                                :tiles="['Creeps', 'Deployment']" 
+                              />
+                          </Modal>
+                        </div>
+                        <div v-if="rule.valueType == 'draw-list'">
+                          <Button @click="rule.open = true" type="primary">Open</Button>
+                          <Modal
+                              v-model="rule.open"
+                              :title="rule.name"
+                              width="900">
+                              <CardList 
+                                v-model="rule.value"
+                                :cards="cards"
+                                :tiles="['Cards', 'Draw']" 
+                              />
+                          </Modal>
                         </div>
                       </i-col>
                     </Row>
@@ -258,7 +294,7 @@
                     <i-col span="12" style="padding: 5px;">
                       <h2>Standard Flow</h2>
                       <p>
-                        The standard flow will track the match through X turns, allowing you control what happens at the end of the Sequence.
+                        The standard flow will track the match through X turns. You control what happens at the end of the Sequence.
                       </p>
                       <br />
                       <div>
@@ -286,7 +322,7 @@
                     <i-col :key="sequence.key" :span="sequence.span">
                       <Card style="margin: 5px;">
                         <p slot="title">{{sequence.name}}</p>
-                        <Button slot="extra" type="primary">
+                        <Button slot="extra" type="primary" @click="options.sequence.modal = true">
                           <Icon type="md-add" />
                         </Button>
                         <!-- Replace with array for events -->
@@ -310,10 +346,18 @@
         </template>
       </Collapse>
     </Card>
+    <!-- @on-ok="ok" @on-cancel="cancel" -->
+    <Modal
+        v-model="options.sequence.modal"
+        title="Add Event"
+        width="900">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tristique tellus. Proin aliquam tristique mauris. Suspendisse aliquam urna eget ante consequat, non maximus risus convallis. Etiam rutrum placerat risus, at eleifend enim pellentesque ac. Fusce lacinia ipsum magna, sit amet convallis erat consequat eget. Nunc efficitur nunc porta erat porta interdum. Sed id pharetra nisl, ullamcorper rutrum purus. Suspendisse pretium convallis lorem sed dignissim. Sed non sem leo. Pellentesque sed cursus eros. Aliquam in sem nec diam efficitur convallis ac at augue. Fusce quis eros nunc.</p>
+    </Modal>
   </div>
 </template>
 
 <script>
+import CardList from "@/components/CardList.vue";
 import { decodeDeck } from "node-artifact-api";
 import * as cardsCollection from "../assets/cards.json";
 import * as rulesCollection from "../assets/rules.json";
@@ -323,25 +367,64 @@ export default {
   name: "Build",
   data() {
     return {
-      cards: cardsCollection.default,
+      library: cardsCollection.default,
       puzzel: {
         name: "",
         description: "",
         sections: []
       },
       options: {
-        active_section: "0",
-        selected_ai_image: "",
-        selected_player_image: "",
-        selected_cards: {
-          soruce: [],
-          target: []
+        section: {
+          active: "0",
         },
         sequence: {
-          turns: 3
+          turns: 3,
+          active: 0,
+          modal: false
         }
       }
     };
+  },
+  computed: {
+    creeps: function () {
+      let creeps = this.library.filter(_ => _.card_type == "Creep");
+      let cards = creeps.map(function(_) { 
+        return {
+          key: uuidv4(),
+          id: _.card_id,
+          label: _.card_name.english,
+          description: _.card_text.english,
+          image: _.large_image.default
+        };
+      });
+
+      cards.sort(function(lhs, rhs) {
+        return lhs.label.localeCompare(rhs.label);
+      });
+
+      return cards;
+    },
+    cards: function() {
+      let libray = this.library.filter(_ => _.card_type != "Mutation");
+      let cards = libray.map(function(_) {
+        return {
+          key: uuidv4(),
+          id: _.card_id,
+          label: _.card_name.english,
+          description: _.card_text.english,
+          image: _.large_image.default
+        };
+      });
+
+      cards.sort(function(lhs, rhs) {
+        return lhs.label.localeCompare(rhs.label);
+      });
+
+      return cards;
+    }
+  },
+  components: {
+    CardList
   },
   methods: {
     addSection() {
@@ -365,7 +448,6 @@ export default {
                 "ADCJdcKJX2kvAFNCQumuwKGsQGUqgGDkagBh4OlAaQDhVtCXSBTZWlnZXI_",
               deck_name: "",
               deck_cards: [],
-              draw_cards: [],
               draw_order: [],
               deck_selection: []
             },
@@ -374,7 +456,6 @@ export default {
               deck_code: "",
               deck_name: "",
               deck_cards: [],
-              draw_cards: [],
               draw_order: [],
               deck_selection: []
             }
@@ -395,7 +476,7 @@ export default {
       });
     },
     loadPlayerDeck() {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       let code = section.decks.player.deck_code;
       if (!code) {
@@ -408,7 +489,7 @@ export default {
 
       let cards = [];
       for (const item of deck.heroes) {
-        let template = this.cards.filter(function(_) {
+        let template = this.library.filter(function(_) {
           return _.card_id == item.id;
         })[0];
         for (const ref of template.references) {
@@ -422,7 +503,7 @@ export default {
       }
 
       for (const item of cards) {
-        let template = this.cards.filter(function(_) {
+        let template = this.library.filter(function(_) {
           return _.card_id == item.id;
         })[0];
         for (let i = 0; i < item.count; i++) {
@@ -434,7 +515,6 @@ export default {
             image: template.large_image.default
           };
           section.decks.player.deck_cards.push(card);
-          section.decks.player.draw_cards.push(card);
         }
       }
 
@@ -442,49 +522,8 @@ export default {
         return lhs.label.localeCompare(rhs.label);
       });
     },
-    playerCardOrderChanged(newTargetKeys) {
-      let index = parseInt(this.options.active_section);
-      let section = this.puzzel.sections[index];
-      section.decks.player.draw_order = newTargetKeys;
-
-      this.options.selected_cards.soruce = [];
-      this.options.selected_cards.target = [];
-      this.options.selected_player_image = "";
-    },
-    playerCardOrderSeletionChanged(sourceSelectedKeys, targetSelectedKeys) {
-      if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {
-        this.options.selected_player_image = "";
-      } else {
-        let differenceSource = sourceSelectedKeys.filter(
-          x => !this.options.selected_cards.soruce.includes(x)
-        );
-        let differenceTarget = targetSelectedKeys.filter(
-          x => !this.options.selected_cards.target.includes(x)
-        );
-        this.options.selected_cards.soruce = sourceSelectedKeys;
-        this.options.selected_cards.target = targetSelectedKeys;
-
-        let index = parseInt(this.options.active_section);
-        let section = this.puzzel.sections[index];
-
-        if (differenceSource.length > 0) {
-          let key = differenceSource[0];
-          let item = section.decks.player.deck_cards.filter(function(v) {
-            return v.key === key;
-          })[0];
-          this.options.selected_player_image = item.image;
-        }
-        if (differenceTarget.length > 0) {
-          let key = differenceTarget[0];
-          let item = section.decks.player.deck_cards.filter(function(v) {
-            return v.key === key;
-          })[0];
-          this.options.selected_player_image = item.image;
-        }
-      }
-    },
     addPlayerDeck() {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       let code = section.decks.player.deck_code;
       let name = section.decks.player.deck_name;
@@ -504,7 +543,7 @@ export default {
       }
     },
     removePlayerDeck(code) {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       section.decks.player.deck_selection = section.decks.player.deck_selection.filter(
         function(_) {
@@ -513,7 +552,7 @@ export default {
       );
     },
     loadAiDeck() {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       let code = section.decks.ai.deck_code;
       if (!code) {
@@ -526,7 +565,7 @@ export default {
 
       let cards = [];
       for (const item of deck.heroes) {
-        let template = this.cards.filter(function(_) {
+        let template = this.library.filter(function(_) {
           return _.card_id == item.id;
         })[0];
         for (const ref of template.references) {
@@ -540,7 +579,7 @@ export default {
       }
 
       for (const item of cards) {
-        let template = this.cards.filter(function(_) {
+        let template = this.library.filter(function(_) {
           return _.card_id == item.id;
         })[0];
         for (let i = 0; i < item.count; i++) {
@@ -552,7 +591,6 @@ export default {
             image: template.large_image.default
           };
           section.decks.ai.deck_cards.push(card);
-          section.decks.ai.draw_cards.push(card);
         }
       }
 
@@ -560,49 +598,8 @@ export default {
         return lhs.label.localeCompare(rhs.label);
       });
     },
-    aiCardOrderChanged(newTargetKeys) {
-      let index = parseInt(this.options.active_section);
-      let section = this.puzzel.sections[index];
-      section.decks.ai.draw_order = newTargetKeys;
-
-      this.options.selected_cards.soruce = [];
-      this.options.selected_cards.target = [];
-      this.options.selected_ai_image = "";
-    },
-    aiCardOrderSeletionChanged(sourceSelectedKeys, targetSelectedKeys) {
-      if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {
-        this.options.selected_ai_image = "";
-      } else {
-        let differenceSource = sourceSelectedKeys.filter(
-          x => !this.options.selected_cards.soruce.includes(x)
-        );
-        let differenceTarget = targetSelectedKeys.filter(
-          x => !this.options.selected_cards.target.includes(x)
-        );
-        this.options.selected_cards.soruce = sourceSelectedKeys;
-        this.options.selected_cards.target = targetSelectedKeys;
-
-        let index = parseInt(this.options.active_section);
-        let section = this.puzzel.sections[index];
-
-        if (differenceSource.length > 0) {
-          let key = differenceSource[0];
-          let item = section.decks.ai.deck_cards.filter(function(v) {
-            return v.key === key;
-          })[0];
-          this.options.selected_ai_image = item.image;
-        }
-        if (differenceTarget.length > 0) {
-          let key = differenceTarget[0];
-          let item = section.decks.ai.deck_cards.filter(function(v) {
-            return v.key === key;
-          })[0];
-          this.options.selected_ai_image = item.image;
-        }
-      }
-    },
     addAiDeck() {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       let code = section.decks.ai.deck_code;
       let name = section.decks.ai.deck_name;
@@ -622,7 +619,7 @@ export default {
       }
     },
     removeAiDeck(code) {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       section.decks.ai.deck_selection = section.decks.ai.deck_selection.filter(
         function(_) {
@@ -631,62 +628,26 @@ export default {
       );
     },
     addStandardFlow() {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
-
-      let start = {
-        key: `start`,
-        name: `Start`,
-        span: 24,
-        can_remove: false,
-        events: [
-          {
-            name: 'On Enter',
-            key: 'auto',
-            delay: 0,
-            removable: false,
-            actions: [],
-          }
-        ],
-      };
-      section.sequences.push(start);
 
       for (let t = 1; t <= this.options.sequence.turns; t++) {
         for (let l = 1; l <= 3; l++) {
-          // let next_turn = (l == 3) ? (t+1) : t;
-          // let next_lane = (l == 3) ? 1 : (l+1);
-          // let at_end = t == this.options.sequence.turns && l === 3;
-
           let data = {
             key: `turn${t}lane${l}`,
             name: `Turn ${t} - Lane ${l}`,
             span: 8,
             removable: false,
-            events: [
-                {
-                  name: 'On Next Lane',
-                  key: 'on_next_lane',
-                  delay: 0,
-                  removable: false,
-                  actions: [],
-                }
-            ]
+            events: [],
           };
           section.sequences.push(data);
         }
       }
 
-      let end = {
-        key: `end`,
-        name: `End`,
-        span: 24,
-        removable: false,
-        events: [],
-      };
-      section.sequences.push(end);
+      // Link throught Events...?
     },
     addCustomFlow() {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
 
       let start = {
@@ -708,7 +669,7 @@ export default {
       section.sequences.push(end);
     },
     removeSequence() {
-      let index = parseInt(this.options.active_section);
+      let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       section.sequences = [];
     }
@@ -716,7 +677,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .float-right {
   float: right;
   margin: 3px;

@@ -217,7 +217,7 @@
     "key": "hero1_ai",
     "name": "Initial Hero Lane 1",
     "description": "Control which hero starts in lane 1. Initial Random Hero Deployment must be disabled for this to work.",
-    "group": "player",
+    "group": "ai",
     "enabled": false,
     "valueType": "number",
     "value": 0,
@@ -227,7 +227,7 @@
     "key": "hero2_ai",
     "name": "Initial Hero Lane 2",
     "description": "Control which hero starts in lane 2. Initial Random Hero Deployment must be disabled for this to work.",
-    "group": "player",
+    "group": "ai",
     "enabled": false,
     "valueType": "number",
     "value": 0,
@@ -237,7 +237,7 @@
     "key": "hero3_ai",
     "name": "Initial Hero Lane 3",
     "description": "Control which hero starts in lane 3. Initial Random Hero Deployment must be disabled for this to work.",
-    "group": "player",
+    "group": "ai",
     "enabled": false,
     "valueType": "number",
     "value": 0,
@@ -450,9 +450,10 @@
     "description": "list of cards to draw each turn",
     "group": "player",
     "enabled": true,
-    "valueType": "list",
+    "valueType": "draw-list",
     "value": [],
-    "canChange": true
+    "canChange": true,
+    "open": false
   },
   {
     "key": "free_cards_per_turn_ai",
@@ -460,9 +461,10 @@
     "description": "list of cards to draw each turn",
     "group": "ai",
     "enabled": true,
-    "valueType": "list",
+    "valueType": "draw-list",
     "value": [],
-    "canChange": true
+    "canChange": true,
+    "open": false
   },
 
   {
@@ -511,10 +513,11 @@
     "description": "list of possible automatic creeps at deployment.",
     "group": "player",
     "enabled": true,
-    "valueType": "list",
+    "valueType": "creep-list",
     "value": [],
     "filter": "Creep",
-    "canChange": true
+    "canChange": true,
+    "open": false
   },
   {
     "key": "creep_list_ai",
@@ -522,10 +525,11 @@
     "description": "list of possible automatic creeps at deployment",
     "group": "ai",
     "enabled": true,
-    "valueType": "list",
+    "valueType": "creep-list",
     "value": [],
     "filter": "Creep",
-    "canChange": true
+    "canChange": true,
+    "open": false
   }
 
 ]
