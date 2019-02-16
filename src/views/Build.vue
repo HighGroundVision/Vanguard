@@ -294,7 +294,7 @@
                     <i-col span="12" style="padding: 5px;">
                       <h2>Standard Flow</h2>
                       <p>
-                        The standard flow will track the match through X turns. You control what happens at the end of the Sequence.
+                        The standard flow will track the match through X turns.
                       </p>
                       <br />
                       <div>
@@ -304,7 +304,7 @@
                       </div>
                       <br />
                       <div>
-                        <Button type="primary" @click="addStandardFlow">Add Standard Flow</Button>
+                        <Button type="primary" @click="addStandardSequence">Add Standard Flow</Button>
                       </div>
                     </i-col>
                     <i-col span="12" style="padding: 5px;">
@@ -313,7 +313,7 @@
                         The custom flow will require you to control the flow of Sequences, althought more complex to set up allows for more control over the flow of events, allowing puzzels that do not following the standard game flow.
                       </p>
                       <br />
-                      <Button type="primary" @click="addCustomFlow">Add Custom Flow</Button>
+                      <Button type="primary" @click="addCustomSequence">Add Custom Flow</Button>
                     </i-col>
                   </Row>
                 </div>
@@ -466,7 +466,8 @@ export default {
             player: rules.filter(_ => _.group == "player"),
             ai: rules.filter(_ => _.group == "ai")
           },
-          sequences: []
+          flow: 0,
+          sequences: [],
         };
         this.puzzel.sections.push(data);
       }
@@ -628,14 +629,14 @@ export default {
         }
       );
     },
-    addStandardFlow() {
+    addStandardSequence() {
       let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
 
       for (let t = 1; t <= this.options.sequence.turns; t++) {
         for (let l = 1; l <= 3; l++) {
           let data = {
-            key: `turn${t}lane${l}`,
+            key:  uuidv4(),
             name: `Turn ${t} - Lane ${l}`,
             span: 8,
             removable: false,
@@ -644,15 +645,14 @@ export default {
           section.sequences.push(data);
         }
       }
-
-      // Link throught Events...?
+      section.flow = 1;
     },
-    addCustomFlow() {
+    addCustomSequence() {
       let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
 
       let start = {
-        key: `start`,
+        key: uuidv4(),
         name: `Start`,
         span: 24,
         removable: false,
@@ -661,18 +661,21 @@ export default {
       section.sequences.push(start);
 
       let end = {
-        key: `end`,
+        key: uuidv4(),
         name: `End`,
         span: 24,
         removable: true,
         events: [],
       };
       section.sequences.push(end);
+
+      section.flow = 2;
     },
     removeSequence() {
       let index = parseInt(this.options.section.active);
       let section = this.puzzel.sections[index];
       section.sequences = [];
+      section.flow = 0;
     }
   }
 };
