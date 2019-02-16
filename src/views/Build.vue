@@ -221,7 +221,7 @@
                               width="900">
                               <CardList 
                                 v-model="rule.value"
-                                :cards="cards"
+                                :cards="draw"
                                 :tiles="['Cards', 'Draw']" 
                               />
                           </Modal>
@@ -266,7 +266,7 @@
                               width="900">
                               <CardList 
                                 v-model="rule.value"
-                                :cards="cards"
+                                :cards="draw"
                                 :tiles="['Cards', 'Draw']" 
                               />
                           </Modal>
@@ -404,8 +404,9 @@ export default {
 
       return cards;
     },
-    cards: function() {
-      let libray = this.library.filter(_ => _.card_type != "Mutation");
+    draw: function() {
+      // let types = ["Spell", "Creep", ""];
+      let libray = this.library.filter(_ => _.mana_cost != undefined);
       let cards = libray.map(function(_) {
         return {
           key: uuidv4(),
