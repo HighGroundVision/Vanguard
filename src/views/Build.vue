@@ -62,7 +62,7 @@
                         </small>
                       </div>
                       <div>
-                        <CardList 
+                        <CardTransfer 
                           v-model="section.decks.player.draw_order"
                           :cards="section.decks.player.deck_cards"
                           :tiles="['Cards in Deck', 'Draw Order']"
@@ -122,7 +122,7 @@
                         </small>
                       </div>
                       <div>
-                        <CardList 
+                        <CardTransfer 
                           v-model="section.decks.ai.draw_order"
                           :cards="section.decks.ai.deck_cards"
                           :tiles="['Cards in Deck', 'Draw Order']"
@@ -205,6 +205,8 @@
                           <Modal
                               v-model="rule.open"
                               :title="rule.name"
+                              :closable="false"
+                              :footer-hide="true"
                               width="900">
                               <CardList 
                                 v-model="rule.value"
@@ -218,6 +220,8 @@
                           <Modal
                               v-model="rule.open"
                               :title="rule.name"
+                              :closable="false"
+                              :footer-hide="true"
                               width="900">
                               <CardList 
                                 v-model="rule.value"
@@ -357,6 +361,7 @@
 </template>
 
 <script>
+import CardTransfer from "@/components/CardTransfer.vue";
 import CardList from "@/components/CardList.vue";
 import { decodeDeck } from "node-artifact-api";
 import * as cardsCollection from "../assets/cards.json";
@@ -397,11 +402,6 @@ export default {
           image: _.large_image.default
         };
       });
-
-      cards.sort(function(lhs, rhs) {
-        return lhs.label.localeCompare(rhs.label);
-      });
-
       return cards;
     },
     draw: function() {
@@ -416,15 +416,11 @@ export default {
           image: _.large_image.default
         };
       });
-
-      cards.sort(function(lhs, rhs) {
-        return lhs.label.localeCompare(rhs.label);
-      });
-
       return cards;
     }
   },
   components: {
+    CardTransfer,
     CardList
   },
   methods: {
