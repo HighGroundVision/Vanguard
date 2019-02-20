@@ -44,7 +44,7 @@ export default {
   methods: {
     onSelectedChange(sourceSelectedKeys, targetSelectedKeys) {
       if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {
-        this.selection.image = require('../assets/empty.png');
+        this.selection.image = require('../assets/imgs/empty.png');
         return;
       }
 
@@ -62,7 +62,7 @@ export default {
       // console.log("direction", direction);
       // console.log("moveKeys", keys);
       
-      this.selection.image = require('../assets/empty.png');
+      this.selection.image = require('../assets/imgs/empty.png');
       this.selection.collection = [];
 
       if(targets.length === 0) {
@@ -100,7 +100,7 @@ export default {
       source: source,
       target: target,
       selection: {
-        image: require('../assets/empty.png'),
+        image: require('../assets/imgs/empty.png'),
         collection: [],
       }
     };

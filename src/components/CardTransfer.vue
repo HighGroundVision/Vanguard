@@ -34,14 +34,14 @@ export default {
   },
   methods: {
     onChange(newTargetKeys) {
-      this.selection.image = require('../assets/empty.png');
+      this.selection.image = require('../assets/imgs/empty.png');
       this.selection.collection = [];
       let value = this.cards.filter(_ => newTargetKeys.includes(_.key) == true);
       this.$emit('input', value);
     },
     onSelectedChange(sourceSelectedKeys, targetSelectedKeys) {
       if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {
-        this.selection.image = require('../assets/empty.png');
+        this.selection.image = require('../assets/imgs/empty.png');
         return;
       }
 
@@ -70,7 +70,7 @@ export default {
   data() {
     return {
       selection: {
-        image: require('../assets/empty.png'),
+        image: require('../assets/imgs/empty.png'),
         collection: [],
       }
     };

@@ -4,676 +4,314 @@
   <div class="build">
     <Card>
       <h1>Build Puzzle</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
       <Divider dashed/>
-      <div>
-        <span>Name</span>
-        <Input v-model="puzzel.name" />
+
+      <Form :label-width="200">
+        <FormItem label="Name">
+          <Input v-model="puzzle.name" placeholder="..." />
+        </FormItem>
+         <FormItem label="Description">
+          <Input v-model="puzzle.description" placeholder="..." />
+        </FormItem>
+      </Form>
+      <Divider dashed/>
+
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+      <br />
+
+      <div style="text-align: center;">
+        <Button type="primary" @click="addMatch">Add Match</Button>
       </div>
-      <div>
-        <span>Description</span>
-        <Input v-model="puzzel.description"  />
-      </div>
       <Divider dashed/>
-      <Icon type="md-warning" color="#ff9900" size="24"/>WARNING
-      <p>
-        As far as I can tell artifact will lock the user into these matches and they will not be able to continue normal 
-        game play until all matches are complete. You should generaly not need more then one match.
-      </p>
-      <br>
-      <Button type="primary" @click="addSection">Add Match</Button>
-      <Divider dashed/>
-      <Collapse v-model="options.section.active" accordion>
-        <template v-for="(section, skey) in puzzel.sections">
-          <Panel :key="skey" :name="skey.toString()">
-            {{ section.name }}
-            <Button type="error" class="float-right" @click="removeSection(section.name)">X</Button>
+
+      <Collapse v-model="options.match.active" accordion>
+        <template v-for="(match, skey) in puzzle.matches">
+          <Panel :key="match.key" :name="skey.toString()">
+            {{ getMatchName(skey) }}
+            <Button type="error" class="float-right" @click="removeMatch(match.key)">X</Button>
             <div slot="content">
-              <div>
-                <h1>Decks</h1>
-                <Row>
-                  <i-col span="12" style="padding: 5px;">
-                    <h2>Player</h2>
-                    <RadioGroup v-model="section.decks.player.mode" :vertical="true">
-                      <Radio label="1">Supply a deck code for the player to use (optional: the order the deck is drawn in)</Radio>
-                      <Radio label="2">The player can pick from one of the following decks</Radio>
-                      <Radio label="3">The player brings their own deck</Radio>
-                    </RadioGroup>
-                    <br>
-                    <div v-if="section.decks.player.mode === '1'">
-                      <div>
-                        <span>Deck Code</span>
-                        <i-input v-model="section.decks.player.deck_code">
-                          <Button
-                            slot="append"
-                            type="primary"
-                            style="width: 100px"
-                            @click="loadPlayerDeck"
-                          >Load</Button>
-                        </i-input>
-                        <br>
-                        <i-input v-model="section.decks.player.deck_name" disabled></i-input>
-                      </div>
-                      <br>
-                      <div>
-                        <span>Deck Order</span>
-                        <br>
-                        <small>
-                          You do not need to give a deck order if you want it to be random.
-                        </small>
-                      </div>
-                      <div>
-                        <CardTransfer 
-                          v-model="section.decks.player.draw_order"
-                          :cards="section.decks.player.deck_cards"
-                          :tiles="['Cards in Deck', 'Draw Order']"
-                        />
-                      </div>
-                    </div>
-                    <div v-if="section.decks.player.mode === '2'">
-                      <div>
-                        <span>Deck Code</span>
-                        <i-input v-model="section.decks.player.deck_code">
-                          <Button slot="append" style="width: 100px" @click="loadPlayerDeck">Load</Button>
-                        </i-input>
-                        <i-input v-model="section.decks.player.deck_name">
-                          <Button slot="append" style="width: 100px" @click="addPlayerDeck">Add</Button>
-                        </i-input>
-                      </div>
-                      <br>
-                      <div>
-                        <template v-for="(deck, dKey) in section.decks.player.deck_selection">
-                          <Card :key="dKey">
-                            <p slot="title">{{ deck.name }}</p>
-                            <Button slot="extra" type="error" @click="removePlayerDeck(deck.code)">X</Button>
-                            <span>{{ deck.code }}</span>
-                          </Card>
-                        </template>
-                      </div>
-                    </div>
-                  </i-col>
-                  <i-col span="12" style="padding: 5px;">
-                    <h2>Ai</h2>
-                    <RadioGroup v-model="section.decks.ai.mode" :vertical="true">
-                      <Radio label="1">Supply a deck code for the Ai to use (optional: the order the deck is drawn in)</Radio>
-                      <Radio label="2">The player can pick from one of the following decks for the Ai</Radio>
-                      <Radio label="3">The player brings their own deck for the Ai</Radio>
-                    </RadioGroup>
-                    <br>
-                    <div v-if="section.decks.ai.mode === '1'">
-                      <div>
-                        <span>Deck Code</span>
-                        <i-input v-model="section.decks.ai.deck_code">
-                          <Button
-                            slot="append"
-                            type="primary"
-                            style="width: 100px"
-                            @click="loadAiDeck"
-                          >Load</Button>
-                        </i-input>
-                        <br>
-                        <i-input v-model="section.decks.ai.deck_name" disabled></i-input>
-                      </div>
-                      <br>
-                      <div>
-                        <span>Deck Order</span>
-                        <br>
-                        <small>
-                          You do not need to give a deck order if you want it to be random.
-                        </small>
-                      </div>
-                      <div>
-                        <CardTransfer 
-                          v-model="section.decks.ai.draw_order"
-                          :cards="section.decks.ai.deck_cards"
-                          :tiles="['Cards in Deck', 'Draw Order']"
-                        />
-                      </div>
-                    </div>
-                    <div v-if="section.decks.ai.mode === '2'">
-                      <div>
-                        <span>Deck Code</span>
-                        <i-input v-model="section.decks.ai.deck_code">
-                          <Button slot="append" style="width: 100px" @click="loadAiDeck">Load</Button>
-                        </i-input>
-                        <i-input v-model="section.decks.ai.deck_name">
-                          <Button slot="append" style="width: 100px" @click="addAiDeck">Add</Button>
-                        </i-input>
-                      </div>
-                      <br>
-                      <div>
-                        <template v-for="(deck, dKey) in section.decks.ai.deck_selection">
-                          <Card :key="dKey">
-                            <p slot="title">{{ deck.name }}</p>
-                            <Button slot="extra" type="error" @click="removeAiDeck(deck.code)">X</Button>
-                            <span>{{ deck.code }}</span>
-                          </Card>
-                        </template>
-                      </div>
-                    </div>
-                  </i-col>
-                </Row>
-                <Divider/>            
-                <h1>Rules</h1>
-                <div>
-                  <h2>General</h2>
-                  <div>
-                    <Row style="line-height: 32px;">
-                      <i-col span="6">Name</i-col>
-                      <i-col span="12">Description</i-col>
-                      <i-col span="2">Enabled</i-col>
-                      <i-col span="4">Value</i-col>
-                    </Row>
-                  </div>
-                  <template v-for="rule in section.rules.global">
-                    <Row :key="rule.key" style="line-height: 32px;">
-                      <i-col span="6">{{ rule.name }}</i-col>
-                      <i-col span="12">{{ rule.description }}</i-col>
-                      <i-col span="2">
-                        <i-switch v-model="rule.enabled"/>
-                      </i-col>
-                      <i-col span="4">
-                        <div v-if="rule.valueType == 'bool'">
-                          <i-switch v-model="rule.value" :disabled="!rule.enabled"/>
-                        </div>
-                        <div v-if="rule.valueType == 'number'">
-                          <i-input v-model="rule.value" :disabled="!rule.enabled"/>
-                        </div>
-                        <div v-if="rule.valueType == 'list'">
-                          <span>List...</span>
-                        </div>
-                      </i-col>
-                    </Row>
-                  </template>
-                  <Divider dashed/>
-                  <h2>Player</h2>
-                  <template v-for="rule in section.rules.player">
-                    <Row :key="rule.key" style="line-height: 32px;">
-                      <i-col span="6">{{ rule.name }}</i-col>
-                      <i-col span="12">{{ rule.description }}</i-col>
-                      <i-col span="2">
-                        <i-switch v-model="rule.enabled"/>
-                      </i-col>
-                      <i-col span="4">
-                        <div v-if="rule.valueType == 'bool'">
-                          <i-switch v-model="rule.value" :disabled="!rule.enabled"/>
-                        </div>
-                        <div v-if="rule.valueType == 'number'">
-                          <i-input v-model="rule.value" :disabled="!rule.enabled"/>
-                        </div>
-                        <div v-if="rule.valueType == 'creep-list'">
-                          <Button @click="rule.open = true" type="primary">Open</Button>
-                          <Modal
-                              v-model="rule.open"
-                              :title="rule.name"
-                              :closable="false"
-                              :footer-hide="true"
-                              width="900">
-                              <CardList 
-                                v-model="rule.value"
-                                :cards="creeps"
-                                :tiles="['Creeps', 'Deployment']" 
-                              />
-                          </Modal>
-                        </div>
-                        <div v-if="rule.valueType == 'draw-list'">
-                          <Button @click="rule.open = true" type="primary">Open</Button>
-                          <Modal
-                              v-model="rule.open"
-                              :title="rule.name"
-                              :closable="false"
-                              :footer-hide="true"
-                              width="900">
-                              <CardList 
-                                v-model="rule.value"
-                                :cards="draw"
-                                :tiles="['Cards', 'Draw']" 
-                              />
-                          </Modal>
-                        </div>
-                      </i-col>
-                    </Row>
-                  </template>
-                  <Divider dashed/>
-                  <h2>Ai</h2>
-                  <template v-for="rule in section.rules.ai">
-                    <Row :key="rule.key" style="line-height: 32px;">
-                      <i-col span="6">{{ rule.name }}</i-col>
-                      <i-col span="12">{{ rule.description }}</i-col>
-                      <i-col span="2">
-                        <i-switch v-model="rule.enabled"/>
-                      </i-col>
-                      <i-col span="4">
-                        <div v-if="rule.valueType == 'bool'">
-                          <i-switch v-model="rule.value" :disabled="!rule.enabled"/>
-                        </div>
-                        <div v-if="rule.valueType == 'number'">
-                          <i-input v-model="rule.value" :disabled="!rule.enabled"/>
-                        </div>
-                        <div v-if="rule.valueType == 'creep-list'">
-                          <Button @click="rule.open = true" type="primary">Open</Button>
-                          <Modal
-                              v-model="rule.open"
-                              :title="rule.name"
-                              width="900">
-                              <CardList 
-                                v-model="rule.value"
-                                :cards="creeps"
-                                :tiles="['Creeps', 'Deployment']" 
-                              />
-                          </Modal>
-                        </div>
-                        <div v-if="rule.valueType == 'draw-list'">
-                          <Button @click="rule.open = true" type="primary">Open</Button>
-                          <Modal
-                              v-model="rule.open"
-                              :title="rule.name"
-                              width="900">
-                              <CardList 
-                                v-model="rule.value"
-                                :cards="draw"
-                                :tiles="['Cards', 'Draw']" 
-                              />
-                          </Modal>
-                        </div>
-                      </i-col>
-                    </Row>
-                  </template>
+            
+              <h2>Decks</h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <br />
+
+              <h3>Player</h3>
+              <DeckSelection :actor="match.player" v-model="match.player.decks" />
+              
+              <h3>Ai</h3>
+              <DeckSelection :actor="match.ai" v-model="match.ai.decks" />
+              
+
+              <Divider dashed/>
+              <h2>Setup</h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+
+              <h3>Time</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <Form :label-width="200">
+                <FormItem label="No Timeout">
+                  <i-switch v-model="match.rules.no_shotclock" />
+                </FormItem>
+                <FormItem label="Time Per Turn" v-if="match.rules.no_shotclock === false">
+                  <Input v-model="match.rules.shotclock_base_time" placeholder="45" />
+                </FormItem>
+              </Form>
+
+              <h3>Deployment - Heroes</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <br />
+
+              <h4>Player</h4>
+              <Form :label-width="200">
+                <FormItem label="Heroes Initial Deployment">
+                  <RadioGroup v-model="match.player.rules.deployment.mode" :vertical="true">
+                    <Radio label="1">The hero flop is random</Radio>
+                    <Radio label="2">The hero flop is based on deck order</Radio>
+                    <Radio label="3" v-if="match.player.decks.length == 1">Supply the flop order</Radio>
+                  </RadioGroup>
+                </FormItem>
+
+                <FormItem label="# Heroes to flop" v-if="match.player.rules.deployment.mode !== '3'">
+                  <Input v-model="match.player.rules.deployment.heroes" placeholder="3" />
+                </FormItem>
+
+                <div v-if="match.player.rules.deployment.mode === '3'">
+                  <FormItem label="Hero in Lane 1">
+                    <Select v-model="match.player.rules.deployment.lane_1">
+                      <Option v-for="item in match.player.decks[0].cards.heroes" :value="item.data.card_id" :key="item.data.card_id">{{ item.data.card_name.english }}</Option>
+                    </Select>    
+                  </FormItem>
+                  <FormItem label="Hero in Lane 2">
+                    <Select v-model="match.player.rules.deployment.lane_2">
+                      <Option v-for="item in match.player.decks[0].cards.heroes" :value="item.data.card_id" :key="item.data.card_id">{{ item.data.card_name.english }}</Option>
+                    </Select>
+                  </FormItem>
+                  <FormItem label="Hero in Lane 3">
+                    <Select v-model="match.player.rules.deployment.lane_3">
+                      <Option v-for="item in match.player.decks[0].cards.heroes" :value="item.data.card_id" :key="item.data.card_id">{{ item.data.card_name.english }}</Option>
+                    </Select>
+                  </FormItem>
                 </div>
-                <Divider/>
-                
-                <h1>Sequence</h1>
-                <p>
-                  Sequences react to the flow to match. As far as I can tell there is no way to control the match, only react to events.
-                </p>
-                <br />
-                <p>
-                  Although that being said, you can build a set of Sequences that react to the flow of the game by using the "on next lane" 
-                  event to goto another sequence when the flow moves from one land to the next. This allows you build Sequences that track 
-                  the flow of the match to have reactions on a give turn / lane. To that end I have created the standard and custom flows.
-                </p>
-                <br />
-                
-                <div v-if="section.sequences.length == 0">
-                  <Row>
-                    <i-col span="12" style="padding: 5px;">
-                      <h2>Standard Flow</h2>
-                      <p>
-                        The standard flow will track the match through X turns.
-                      </p>
-                      <br />
-                      <div>
-                        <span>Turns</span>
-                        <br />
-                        <i-input v-model="options.sequence.turns" />
-                      </div>
-                      <br />
-                      <div>
-                        <Button type="primary" @click="addStandardSequence">Add Standard Flow</Button>
-                      </div>
-                    </i-col>
-                    <i-col span="12" style="padding: 5px;">
-                      <h2>Custom Flow</h2>
-                      <p>
-                        The custom flow will require you to control the flow of Sequences, althought more complex to set up allows for more control over the flow of events, allowing puzzels that do not following the standard game flow.
-                      </p>
-                      <br />
-                      <Button type="primary" @click="addCustomSequence">Add Custom Flow</Button>
-                    </i-col>
-                  </Row>
+              </Form>
+
+              <!--
+              <h4>Ai</h4>
+              <Form :label-width="200">
+                <FormItem label="Heroes Initial Deployment">
+                  <RadioGroup v-model="hero_flop" :vertical="true">
+                    <Radio label="1">The hero flop is random</Radio>
+                    <Radio label="2">The hero flop is based on deck order</Radio>
+                    <Radio label="3" v-if="match.ai.decks.length == 1">Supply the flop order</Radio>
+                  </RadioGroup>
+                </FormItem>
+
+                <FormItem label="# Heroes to flop" v-if="true">
+                  <Input v-model="initial_heroes_ai" placeholder="3" />
+                </FormItem>
+
+                <div v-if="true">
+                  <FormItem label="Hero for Lane 1">
+                    <Input v-model="hero1_ai" placeholder="..." />
+                  </FormItem>
+                  <FormItem label="Hero for Lane 2">
+                    <Input v-model="hero2_ai" placeholder="..." />
+                  </FormItem>
+                  <FormItem label="Hero for Lane 3">
+                    <Input v-model="hero3_ai" placeholder="..." />
+                  </FormItem>
                 </div>
-                <Row>
-                  <template v-for="(sequence) in section.sequences">
-                    <i-col :key="sequence.key" :span="sequence.span">
-                      <Card style="margin: 5px;">
-                        <p slot="title">{{sequence.name}}</p>
-                        <Button slot="extra" type="primary" @click="options.sequence.modal = true">
-                          <Icon type="md-add" />
-                        </Button>
-                        <!-- Replace with array for events -->
-                        <!-- Replace with array for actions for each event -->
-                        <CellGroup>
-                          <template v-for="(event) in sequence.events">
-                            <Cell :key="event.key" :title="event.name" />
-                          </template>
-                        </CellGroup>
-                      </Card>
-                    </i-col>
-                  </template>
-                </Row>
-                <br />
-                <div v-if="section.sequences.length > 0">
-                  <Button type="error" @click="removeSequence">Remove Sequence</Button>
-                </div>
-              </div>
+              </Form>
+              -->
+
+              <!-- initial_heroes -->
+              <!-- initial_heroes_ai -->
+
+              <!-- heroes_initial_lane_random -->
+              
+              <!-- hero1_player -->
+              <!-- hero2_player -->
+              <!-- hero3_player -->
+              <!-- hero1_ai -->
+              <!-- hero2_ai -->
+              <!-- hero3_ai -->
+
+              <h3>Deployment - Creeps</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+
+              <!-- creeps_first_turn -->
+              <!-- creeps_first_turn_ai -->
+
+              <!-- creep_list -->
+              <!-- creep_list_ai -->
+
+              <!-- creeps_lanes_player_1each -->
+              <!-- creeps_lanes_random -->
+              <!-- only_flop_across_from_heroes -->
+
+              <h3>Towers / Ancients</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- tower1_health -->
+              <!-- tower2_health -->
+              <!-- tower3_health -->
+
+              <!-- tower1_health_ai -->
+              <!-- tower2_health_ai -->
+              <!-- tower3_health_ai -->
+
+              <!-- ancient1_health -->
+              <!-- ancient2_health -->
+              <!-- ancient3_health -->
+
+              <!-- ancient1_health_ai -->
+              <!-- ancient2_health_ai -->
+              <!-- ancient3_health_ai -->
+
+              <!-- initial_mana -->
+              <!-- initial_mana_ai -->
+
+              <h3>Library</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- draw_order -->
+              <!-- draw_order_ai -->
+              <!-- cards_first_turn -->
+              <!-- cards_first_turn_ai -->
+
+              <h3>Combat</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- ai_pass_chance_multiplier -->
+              <!-- force_combat_manager_rand_to_zero -->
+              <!-- ai_action_choice_non_random -->
+
+              <h3>Shopping</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- store_enabled -->
+
+              <h3>Victory</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- gold_victory -->
+              <!-- units_victory -->
+              <!-- kills_victory -->
+
+              <Divider dashed/>
+              <h2>Each Turn</h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+
+              <h3>Extras</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- mana_boost_per_turn -->
+              <!-- mana_boost_per_turn_ai -->
+              <!-- gold_per_turn -->
+              <!-- gold_per_turn_ai -->
+
+              <h3>Cards</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- cards_per_turn -->
+              <!-- cards_per_turn_ai -->
+
+              <!-- free_cards_per_turn -->
+              <!-- free_cards_per_turn_ai -->
+
+              <h3>Creeps</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <!-- creeps_per_turn -->
+              <!-- creeps_per_turn_ai -->
+
             </div>
           </Panel>
         </template>
       </Collapse>
     </Card>
-    <!-- @on-ok="ok" @on-cancel="cancel" -->
-    <Modal
-        v-model="options.sequence.modal"
-        title="Add Event"
-        width="900">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tristique tellus. Proin aliquam tristique mauris. Suspendisse aliquam urna eget ante consequat, non maximus risus convallis. Etiam rutrum placerat risus, at eleifend enim pellentesque ac. Fusce lacinia ipsum magna, sit amet convallis erat consequat eget. Nunc efficitur nunc porta erat porta interdum. Sed id pharetra nisl, ullamcorper rutrum purus. Suspendisse pretium convallis lorem sed dignissim. Sed non sem leo. Pellentesque sed cursus eros. Aliquam in sem nec diam efficitur convallis ac at augue. Fusce quis eros nunc.</p>
-    </Modal>
   </div>
 </template>
 
 <script>
+// Components
 import CardTransfer from "@/components/CardTransfer.vue";
 import CardList from "@/components/CardList.vue";
+import DeckSelection from "@/components/DeckSelection.vue";
+
+// Deck Code Decoder
 import { decodeDeck } from "node-artifact-api";
-import * as cardsCollection from "../assets/cards.json";
-import * as rulesCollection from "../assets/rules.json";
+
+// Data
+import * as cardsCollection from "@/assets/data/cards.json";
+import * as rulesCollection from "@/assets/data/rules.json";
+import * as matchTempalte from "@/assets/data/match.json";
+import * as actorTempalte from "@/assets/data/actor.json";
+import { timeout } from 'q';
+
+// ID
 let uuidv4 = require("uuid/v4");
+
+// Object Cloning
+let clone = require('clone');
+
+// Assets
+// let emptyCard = require('../assets/imgs/empty.png');
 
 export default {
   name: "Build",
+  components: {
+    CardTransfer,
+    CardList,
+    DeckSelection
+  },
+  methods: {
+    addMatch() {
+      let match = clone(matchTempalte.default);
+      match.key = uuidv4();
+      match.player = clone(actorTempalte.default);
+      match.ai = clone(actorTempalte.default);
+      this.puzzle.matches.push(match);
+    },
+    removeMatch(key) {
+      this.puzzle.matches = this.puzzle.matches.filter(_ => _.key != key);
+    },
+    getMatchName(index) {
+      return "Match " + (index + 1).toString();
+    },
+    addFlow() {
+      // Add Flow
+    },
+    removeFlow() {
+      // Remove Flow
+    }
+  },
+  computed: {
+    heroes: function() {
+      return [];
+    },
+    creeps: function () {
+      return [];
+    },
+    draw: function() {
+      return [];
+    },
+  },
   data() {
+    setTimeout(() => { this.addMatch(); }, 1000);
+
     return {
-      library: cardsCollection.default,
-      puzzel: {
+      test: {
+        input: '',
+        switch: false,
+      },
+      puzzle: {
         name: "",
         description: "",
-        sections: []
+        matches: []
       },
       options: {
-        section: {
+        match: {
           active: "0",
         },
         sequence: {
           turns: 3,
-          active: 0,
-          modal: false
         }
       }
     };
   },
-  computed: {
-    creeps: function () {
-      let creeps = this.library.filter(_ => _.card_type == "Creep");
-      let cards = creeps.map(function(_) { 
-        return {
-          key: uuidv4(),
-          id: _.card_id,
-          label: _.card_name.english,
-          description: _.card_text.english,
-          image: _.large_image.default
-        };
-      });
-      return cards;
-    },
-    draw: function() {
-      // let types = ["Spell", "Creep", ""];
-      let libray = this.library.filter(_ => _.mana_cost != undefined);
-      let cards = libray.map(function(_) {
-        return {
-          key: uuidv4(),
-          id: _.card_id,
-          label: _.card_name.english,
-          description: _.card_text.english,
-          image: _.large_image.default
-        };
-      });
-      return cards;
-    }
-  },
-  components: {
-    CardTransfer,
-    CardList
-  },
-  methods: {
-    addSection() {
-      let results = false;
-      if (this.puzzel.sections.length > 0) {
-        results = confirm(`Are you sure we wish add more then one match?`);
-      } else {
-        results = true;
-      }
-
-      if (results) {
-        let rules = rulesCollection.default.slice();
-        var id = this.puzzel.sections.length + 1;
-        let data = {
-          id: id,
-          name: "Match " + id,
-          decks: {
-            player: {
-              mode: 0,
-              deck_code:
-                "ADCJdcKJX2kvAFNCQumuwKGsQGUqgGDkagBh4OlAaQDhVtCXSBTZWlnZXI_",
-              deck_name: "",
-              deck_cards: [],
-              draw_order: [],
-              deck_selection: []
-            },
-            ai: {
-              mode: 0,
-              deck_code: "",
-              deck_name: "",
-              deck_cards: [],
-              draw_order: [],
-              deck_selection: []
-            }
-          },
-          rules: {
-            global: rules.filter(_ => _.group == "global"),
-            player: rules.filter(_ => _.group == "player"),
-            ai: rules.filter(_ => _.group == "ai")
-          },
-          flow: 0,
-          sequences: [],
-        };
-        this.puzzel.sections.push(data);
-      }
-    },
-    removeSection(name) {
-      this.puzzel.sections = this.puzzel.sections.filter(function(v) {
-        return v.name != name;
-      });
-    },
-    loadPlayerDeck() {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-      let code = section.decks.player.deck_code;
-      if (!code) {
-        return;
-      }
-
-      let deck = decodeDeck(code);
-      section.decks.player.deck_cards = [];
-      section.decks.player.deck_name = deck.name;
-
-      let cards = [];
-      for (const item of deck.heroes) {
-        let template = this.library.filter(function(_) {
-          return _.card_id == item.id;
-        })[0];
-        for (const ref of template.references) {
-          if (ref.ref_type == "includes") {
-            cards.push({ id: ref.card_id, count: ref.count });
-          }
-        }
-      }
-      for (const item of deck.cards) {
-        cards.push({ id: item.id, count: item.count });
-      }
-
-      for (const item of cards) {
-        let template = this.library.filter(function(_) {
-          return _.card_id == item.id;
-        })[0];
-        for (let i = 0; i < item.count; i++) {
-          let card = {
-            key: uuidv4(),
-            id: template.card_id,
-            label: template.card_name.english,
-            description: template.card_text.english,
-            image: template.large_image.default
-          };
-          section.decks.player.deck_cards.push(card);
-        }
-      }
-
-      section.decks.player.deck_cards.sort(function(lhs, rhs) {
-        return lhs.label.localeCompare(rhs.label);
-      });
-    },
-    addPlayerDeck() {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-      let code = section.decks.player.deck_code;
-      let name = section.decks.player.deck_name;
-
-      let results =
-        section.decks.player.deck_selection.filter(function(_) {
-          return _.code === code;
-        }).length === 0;
-      if (code && name && results) {
-        section.decks.player.deck_selection.push({
-          code: code,
-          name: name
-        });
-
-        section.decks.player.deck_code = "";
-        section.decks.player.deck_name = "";
-      }
-    },
-    removePlayerDeck(code) {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-      section.decks.player.deck_selection = section.decks.player.deck_selection.filter(
-        function(_) {
-          return _.code !== code;
-        }
-      );
-    },
-    loadAiDeck() {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-      let code = section.decks.ai.deck_code;
-      if (!code) {
-        return;
-      }
-
-      let deck = decodeDeck(code);
-      section.decks.ai.deck_cards = [];
-      section.decks.ai.deck_name = deck.name;
-
-      let cards = [];
-      for (const item of deck.heroes) {
-        let template = this.library.filter(function(_) {
-          return _.card_id == item.id;
-        })[0];
-        for (const ref of template.references) {
-          if (ref.ref_type == "includes") {
-            cards.push({ id: ref.card_id, count: ref.count });
-          }
-        }
-      }
-      for (const item of deck.cards) {
-        cards.push({ id: item.id, count: item.count });
-      }
-
-      for (const item of cards) {
-        let template = this.library.filter(function(_) {
-          return _.card_id == item.id;
-        })[0];
-        for (let i = 0; i < item.count; i++) {
-          let card = {
-            key: uuidv4(),
-            id: template.card_id,
-            label: template.card_name.english,
-            description: template.card_text.english,
-            image: template.large_image.default
-          };
-          section.decks.ai.deck_cards.push(card);
-        }
-      }
-
-      section.decks.ai.deck_cards.sort(function(lhs, rhs) {
-        return lhs.label.localeCompare(rhs.label);
-      });
-    },
-    addAiDeck() {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-      let code = section.decks.ai.deck_code;
-      let name = section.decks.ai.deck_name;
-
-      let results =
-        section.decks.ai.deck_selection.filter(function(_) {
-          return _.code === code;
-        }).length === 0;
-      if (code && name && results) {
-        section.decks.ai.deck_selection.push({
-          code: code,
-          name: name
-        });
-
-        section.decks.ai.deck_code = "";
-        section.decks.ai.deck_name = "";
-      }
-    },
-    removeAiDeck(code) {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-      section.decks.ai.deck_selection = section.decks.ai.deck_selection.filter(
-        function(_) {
-          return _.code !== code;
-        }
-      );
-    },
-    addStandardSequence() {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-
-      for (let t = 1; t <= this.options.sequence.turns; t++) {
-        for (let l = 1; l <= 3; l++) {
-          let data = {
-            key:  uuidv4(),
-            name: `Turn ${t} - Lane ${l}`,
-            span: 8,
-            removable: false,
-            events: [],
-          };
-          section.sequences.push(data);
-        }
-      }
-      section.flow = 1;
-    },
-    addCustomSequence() {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-
-      let start = {
-        key: uuidv4(),
-        name: `Start`,
-        span: 24,
-        removable: false,
-        events: [],
-      };
-      section.sequences.push(start);
-
-      let end = {
-        key: uuidv4(),
-        name: `End`,
-        span: 24,
-        removable: true,
-        events: [],
-      };
-      section.sequences.push(end);
-
-      section.flow = 2;
-    },
-    removeSequence() {
-      let index = parseInt(this.options.section.active);
-      let section = this.puzzel.sections[index];
-      section.sequences = [];
-      section.flow = 0;
-    }
-  }
 };
 </script>
 
@@ -681,5 +319,16 @@ export default {
 .float-right {
   float: right;
   margin: 3px;
+}
+.step-right {
+  margin-left: 8px;
+}
+.demo-carousel {
+  height: 200px;
+  line-height: 200px;
+  text-align: center;
+  color: #fff;
+  font-size: 20px;
+  background: #506b9e;
 }
 </style>

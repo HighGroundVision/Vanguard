@@ -1,0 +1,13 @@
+{
+  "key": 0,
+  "player": {},
+  "ai": {},
+  "rules": {
+    "no_shotclock": false,
+    "shotclock_base_time": 45
+  },
+  "sequences": {
+    "mode": 0,
+    "flow": []
+  }
+}

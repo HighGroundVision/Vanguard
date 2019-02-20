@@ -1,0 +1,24 @@
+{
+  "mode": "2",
+  "deck": {
+    "show": false,
+    "code": "ADCJdcKJX2kvAFNCQumuwKGsQGUqgGDkagBh4OlAaQDhVtCXSBTZWlnZXI_",
+    "cards": {
+      "heroes": [],
+      "library": [],
+      "items": []
+    },
+    "name": "",
+    "loaded": false
+  },
+  "decks": [],
+  "rules": {
+    "deployment": {
+      "mode": "0",
+      "heroes": 3,
+      "lane_1": 0,
+      "lane_2": 0,
+      "lane_3": 0
+    }
+  }
+ }
