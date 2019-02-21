@@ -24,8 +24,9 @@
       "kills_amount": 0
     }
   },
-  "sequences": {
-    "mode": 0,
-    "flow": []
+  "sequence": {
+    "show": false,
+    "flow": {},
+    "flows": []
   }
 }

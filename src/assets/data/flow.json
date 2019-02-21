@@ -1,0 +1,67 @@
+{
+  "key": 0,
+  "turn": 1,
+  "lane": 1,
+  "mode": 0,
+  "command": 0,
+  "commands": {
+    "player_quit": false,
+    "ai_concede": false,
+    "load_section": 0,
+    "load_puzzle": ""
+  },
+  "rule": 0,
+  "actors": {
+    "player": {
+      "library": {
+        "draw": 7,
+        "free": []
+      },
+      "turn": {
+        "mana": 0,
+        "gold": 0
+      },
+      "creeps": {
+        "mode": "0",
+        "list": [],
+        "count": 0
+      }
+    },
+    "ai": {
+      "library": {
+        "draw": 7,
+        "free": []
+      },
+      "turn": {
+        "mana": 0,
+        "gold": 0
+      },
+      "creeps": {
+        "mode": "0",
+        "list": [],
+        "count": 0
+      }
+    }
+  },
+  "rules": {
+    "clock": {
+      "no_shotclock": false,
+      "shotclock_base_time": 45
+    },    
+    "store": {
+      "enabled": true
+    },
+    "combat": {
+      "ai_pass_chance_multiplier": 0
+    },
+    "victory": {
+      "gold_flag": false,
+      "gold_amount": 0,
+      "units_flag":  false,
+      "units_amount": 0,
+      "kills_flag":  false,
+      "kills_amount": 0
+    }
+  }
+ }
+ 

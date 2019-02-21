@@ -11,7 +11,7 @@
         <FormItem label="Name">
           <Input v-model="puzzle.name" placeholder="..." />
         </FormItem>
-         <FormItem label="Description">
+        <FormItem label="Description">
           <Input v-model="puzzle.description" placeholder="..." />
         </FormItem>
       </Form>
@@ -29,9 +29,10 @@
         <template v-for="(match, skey) in puzzle.matches">
           <Panel :key="match.key" :name="skey.toString()">
             {{ getMatchName(skey) }}
-            <Button type="error" class="float-right" @click="removeMatch(match.key)">X</Button>
+            <Button type="error" class="float-right" @click="removeMatch(match.key)">Remove</Button>
             <div slot="content">
-            
+              
+              
               <h2>Decks</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
               <br />
@@ -406,12 +407,6 @@
                 </FormItem>
               </Form>
 
-              <!-- cards_per_turn -->
-              <!-- cards_per_turn_ai -->
-
-              <!-- free_cards_per_turn -->
-              <!-- free_cards_per_turn_ai -->
-
               <h3>Creeps</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
 
@@ -428,11 +423,172 @@
                   <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.creeps"></InputNumber>
                 </FormItem>
               </Form>
+              
 
               <Divider dashed />
               <h2>Flow</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
               <br />
+
+              <div style="text-align: center;">
+                <Button type="primary" @click="match.sequence.show = true">Add Flow</Button>
+              </div>
+              <Divider dashed/>
+
+              <Modal
+                v-model="match.sequence.show"
+                :footer-hide="true"
+                title="Sequence Flow"
+                width="1000">
+                <Form :label-width="100">
+                  <FormItem label="Turn">
+                    <InputNumber :max="9999" :min="1" v-model="match.sequence.flow.turn"></InputNumber>
+                  </FormItem>
+                  <FormItem label="Lane">
+                    <Slider :max="3" :min="1" v-model="match.sequence.flow.lane" show-input></Slider>
+                  </FormItem>
+                  <FormItem label="Mode">
+                    <RadioGroup v-model="match.sequence.flow.mode" :vertical="true">
+                      <Radio label="1">Invoke Command</Radio>
+                      <Radio label="2">Change Rules</Radio>
+                    </RadioGroup>
+                  </FormItem>
+                  <div v-if="match.sequence.flow.mode === '1'">
+                    <FormItem label="Command">
+                      <RadioGroup v-model="match.sequence.flow.command" :vertical="true">
+                        <Radio label="1">Player Quits</Radio>
+                        <Radio label="2">Ai Concedes</Radio>
+                        <Radio label="3">Load Match</Radio>
+                        <Radio label="4">Load Puzzle</Radio>
+                      </RadioGroup>
+                    </FormItem>
+                    <FormItem label="Load Match" v-if="match.sequence.flow.command === '3'">
+                      <Select v-model="match.sequence.flow.commands.load_section">
+                        <Option v-for="(item, sKey) in puzzle.matches" :value="sKey" :key="item.key">{{ getMatchName(skey) }}</Option>
+                      </Select>
+                    </FormItem>
+                    <FormItem label="Load Puzzle" v-if="match.sequence.flow.command === '4'">
+                      <Input v-model="match.sequence.flow.commands.load_puzzle" placeholder="" />
+                    </FormItem>
+                  </div>
+                  <div v-if="match.sequence.flow.mode === '2'">
+                    <FormItem label="Rule">
+                      <RadioGroup v-model="match.sequence.flow.rule" :vertical="true">
+                        <Radio label="1">Clock</Radio>
+                        <Radio label="2">Store</Radio>
+                        <Radio label="3">Combat</Radio>
+                        <Radio label="4">Victory</Radio>
+                        <Radio label="5">Library</Radio>
+                        <Radio label="6">Creeps</Radio>
+                      </RadioGroup>
+                    </FormItem>
+                    <div v-if="match.sequence.flow.rule === '1'">
+                      <Divider><strong>General</strong></Divider>
+                      <FormItem label="No Timeout">
+                        <i-switch v-model="match.sequence.flow.rules.clock.no_shotclock" />
+                      </FormItem>
+                      <FormItem label="Time Per Turn" v-if="match.sequence.flow.rules.clock.no_shotclock === false">
+                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.clock.shotclock_base_time"></InputNumber>
+                      </FormItem>
+                    </div>
+                    <div v-if="match.sequence.flow.rule === '2'">
+                      <Divider><strong>General</strong></Divider>
+                      <FormItem label="Store Enabled">
+                        <i-switch v-model="match.sequence.flow.rules.store.enabled" />
+                      </FormItem>
+                    </div>
+                    <div v-if="match.sequence.flow.rule === '3'">
+                      <Divider><strong>Ai</strong></Divider>
+                      <FormItem label="Pass Chance Multiplier">
+                        <Slider v-model="match.sequence.flow.rules.combat.ai_pass_chance_multiplier" show-input></Slider>
+                      </FormItem>
+                    </div>
+                    <div v-if="match.sequence.flow.rule === '4'">
+                      <Divider><strong>General</strong></Divider>
+                      <FormItem label="Gold">
+                        <i-switch v-model="match.sequence.flow.rules.victory.gold_flag" />
+                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.gold_amount" v-if="match.sequence.flow.rules.victory.gold_flag" class="step-right"></InputNumber>
+                      </FormItem>
+                      <FormItem label="Units">
+                        <i-switch v-model="match.sequence.flow.rules.victory.units_flag" />
+                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.units_amount" v-if="match.sequence.flow.rules.victory.units_flag" class="step-right"></InputNumber>
+                      </FormItem>
+                      <FormItem label="Kills">
+                        <i-switch v-model="match.sequence.flow.rules.victory.kills_flag" />
+                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.kills_amount" v-if="match.sequence.flow.rules.victory.kills_flag" class="step-right"></InputNumber>
+                      </FormItem>
+                    </div>
+                    <div v-if="match.sequence.flow.rule === '5'">
+                      <Divider><strong>Player</strong></Divider>
+                      <FormItem label="Cards to Draw">
+                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.actors.player.library.draw"></InputNumber>
+                      </FormItem>
+                      <FormItem label="Extra Cards">
+                        <CardList 
+                          v-model="match.sequence.flow.actors.player.library.free"
+                          :cards="draw"
+                          :tiles="['Cards', 'Extra']" 
+                        />
+                      </FormItem>
+                      <Divider><strong>Ai</strong></Divider>
+                      <FormItem label="Cards to Draw">
+                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.actors.ai.library.draw"></InputNumber>
+                      </FormItem>
+                      <FormItem label="Extra Cards">
+                        <CardList 
+                          v-model="match.sequence.flow.actors.ai.library.free"
+                          :cards="draw"
+                          :tiles="['Cards', 'Extra']" 
+                        />
+                      </FormItem>
+                    </div>
+                    <div v-if="match.sequence.flow.rule === '6'">
+                      <Divider><strong>Player</strong></Divider>
+                      <FormItem label="Creep List">
+                        <CardList 
+                          v-model="match.sequence.flow.actors.player.creeps.list"
+                          :cards="creeps"
+                          :tiles="['Creeps', 'Deployment']" 
+                          @on-change="match.sequence.flow.actors.player.creeps.count = match.sequence.flow.actors.player.creeps.list.length"
+                        />
+                      </FormItem>
+                      <FormItem label="Creep Count">
+                        <InputNumber :max="100" :min="0" v-model="match.sequence.flow.actors.player.creeps.count"></InputNumber>
+                      </FormItem>
+                      <Divider><strong>Ai</strong></Divider>
+                      <FormItem label="Creep List">
+                        <CardList 
+                          v-model="match.sequence.flow.actors.ai.creeps.list"
+                          :cards="creeps"
+                          :tiles="['Creeps', 'Deployment']" 
+                          @on-change="match.sequence.flow.actors.ai.creeps.count = match.sequence.flow.actors.ai.creeps.list.length"
+                        />
+                      </FormItem>
+                      <FormItem label="Creep Count">
+                        <InputNumber :max="100" :min="0" v-model="match.sequence.flow.actors.ai.creeps.count"></InputNumber>
+                      </FormItem>
+                    </div>
+                  </div>
+                  <FormItem label="">
+                    <Button type="success" @click="addFlow(match)" v-if="match.sequence.flow.key === 0">Add Flow</Button>
+                    <Button type="success" @click="addFlow(match)" v-if="match.sequence.flow.key != 0">Edit Flow</Button>
+                    <Button type="info" @click="match.sequence.show = false" class="step-right">Cancel</Button>
+                  </FormItem>
+                </Form>
+              </Modal>
+
+              <div>
+                <template v-for="flow in match.sequence.flows">
+                  <Card :key="flow.key">
+                    <p slot="title">Flow - Turn {{flow.turn}} Lane {{flow.lane}}</p>
+                    <Button slot="extra" type="info" @click="editFlow(match, flow.key)">Edit</Button>
+                    <Button slot="extra" type="error" @click="removeFlow(match, flow.key)" class="step-right">Remove</Button>
+                    <div>
+                      <!-- Test -->
+                    </div>
+                  </Card>
+                </template>
+              </div>
 
             </div>
           </Panel>
@@ -457,6 +613,7 @@ import * as cardsCollection from "@/assets/data/cards.json";
 import * as rulesCollection from "@/assets/data/rules.json";
 import * as matchTempalte from "@/assets/data/match.json";
 import * as actorTempalte from "@/assets/data/actor.json";
+import * as flowTempalte from "@/assets/data/flow.json";
 
 // ID
 let uuidv4 = require("uuid/v4");
@@ -481,6 +638,7 @@ export default {
       match.key = uuidv4();
       match.player = clone(actorTempalte.default);
       match.ai = clone(actorTempalte.default);
+      match.sequence.flow = clone(flowTempalte.default);
       this.puzzle.matches.push(match);
     },
     removeMatch(key) {
@@ -489,11 +647,26 @@ export default {
     getMatchName(index) {
       return "Match " + (index + 1).toString();
     },
-    addFlow() {
-      // Add Flow
+    addFlow(match) {
+      let flow = match.sequence.flow;
+      if(flow.key == 0) {
+        flow.key = uuidv4();
+        match.sequence.flows.push(flow);
+      } else {
+        let index = match.sequence.flows.findIndex(_ => _.key == flow.key);
+        match.sequence.flows[index] = flow;
+      }
+      
+      match.sequence.flow = clone(flowTempalte.default);
+      match.sequence.show = false;
     },
-    removeFlow() {
-      // Remove Flow
+    editFlow(match, key) {
+      let flow = match.sequence.flows.find(_ => _.key == key);
+      match.sequence.flow = flow;
+      match.sequence.show = true;
+    },
+    removeFlow(match, key) {
+      match.sequence.flows = match.sequence.flows.filter(_ => _.key != key);
     }
   },
   computed: {
@@ -530,8 +703,6 @@ export default {
     },
   },
   data() {
-    setTimeout(() => { this.addMatch(); }, 1000);
-
     return {
       test: {
         input: '',
