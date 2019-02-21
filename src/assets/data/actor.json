@@ -1,5 +1,5 @@
 {
-  "mode": "2",
+  "mode": "1",
   "deck": {
     "show": false,
     "code": "ADCJdcKJX2kvAFNCQumuwKGsQGUqgGDkagBh4OlAaQDhVtCXSBTZWlnZXI_",
@@ -13,12 +13,17 @@
   },
   "decks": [],
   "rules": {
-    "deployment": {
+    "flop": {
       "mode": "0",
       "heroes": 3,
       "lane_1": 0,
       "lane_2": 0,
       "lane_3": 0
+    },
+    "creeps": {
+      "mode": "0",
+      "list": [],
+      "count": 0
     }
   }
  }

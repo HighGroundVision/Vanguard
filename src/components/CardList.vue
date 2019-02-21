@@ -1,15 +1,15 @@
 <template>
   <div>
-  <img :src="selection.image" class="float-right" style="height: 400px;">
-  <Transfer
-    :data="source"
-    :target-keys="target"
-    :titles="tiles"
-    :list-style="{ width: '250px', height: '400px' }"
-    not-found-text="Empty"
-    @on-change="onChange"
-    @on-selected-change="onSelectedChange"
-  ></Transfer>
+    <img :src="selection.image" class="float-right" style="height: 400px;">
+    <Transfer
+      :data="source"
+      :target-keys="target"
+      :titles="tiles"
+      :list-style="{ width: '250px', height: '400px' }"
+      not-found-text="Empty"
+      @on-change="onChange"
+      @on-selected-change="onSelectedChange"
+    ></Transfer>
   </div>
 </template>
 

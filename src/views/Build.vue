@@ -36,108 +36,62 @@
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
               <br />
 
-              <h3>Player</h3>
-              <DeckSelection :actor="match.player" v-model="match.player.decks" />
+              <Divider><strong>Player</strong></Divider>
+              <DeckSelection :actor.sync="match.player" />
               
-              <h3>Ai</h3>
-              <DeckSelection :actor="match.ai" v-model="match.ai.decks" />
+              <Divider><strong>Ai</strong></Divider>
+              <DeckSelection :actor.sync="match.ai" />
               
-
-              <Divider dashed/>
+              <Divider dashed />
               <h2>Setup</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
 
               <h3>Time</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              
               <Form :label-width="200">
                 <FormItem label="No Timeout">
                   <i-switch v-model="match.rules.no_shotclock" />
                 </FormItem>
                 <FormItem label="Time Per Turn" v-if="match.rules.no_shotclock === false">
-                  <Input v-model="match.rules.shotclock_base_time" placeholder="45" />
+                  <InputNumber :max="9999" :min="0" v-model="match.rules.shotclock_base_time"></InputNumber>
                 </FormItem>
               </Form>
 
               <h3>Deployment - Heroes</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <br />
 
-              <h4>Player</h4>
-              <Form :label-width="200">
-                <FormItem label="Heroes Initial Deployment">
-                  <RadioGroup v-model="match.player.rules.deployment.mode" :vertical="true">
-                    <Radio label="1">The hero flop is random</Radio>
-                    <Radio label="2">The hero flop is based on deck order</Radio>
-                    <Radio label="3" v-if="match.player.decks.length == 1">Supply the flop order</Radio>
-                  </RadioGroup>
-                </FormItem>
+              <Divider><strong>Player</strong></Divider>
+              <HeroDeployment :actor.sync="match.player" />
 
-                <FormItem label="# Heroes to flop" v-if="match.player.rules.deployment.mode !== '3'">
-                  <Input v-model="match.player.rules.deployment.heroes" placeholder="3" />
-                </FormItem>
-
-                <div v-if="match.player.rules.deployment.mode === '3'">
-                  <FormItem label="Hero in Lane 1">
-                    <Select v-model="match.player.rules.deployment.lane_1">
-                      <Option v-for="item in match.player.decks[0].cards.heroes" :value="item.data.card_id" :key="item.data.card_id">{{ item.data.card_name.english }}</Option>
-                    </Select>    
-                  </FormItem>
-                  <FormItem label="Hero in Lane 2">
-                    <Select v-model="match.player.rules.deployment.lane_2">
-                      <Option v-for="item in match.player.decks[0].cards.heroes" :value="item.data.card_id" :key="item.data.card_id">{{ item.data.card_name.english }}</Option>
-                    </Select>
-                  </FormItem>
-                  <FormItem label="Hero in Lane 3">
-                    <Select v-model="match.player.rules.deployment.lane_3">
-                      <Option v-for="item in match.player.decks[0].cards.heroes" :value="item.data.card_id" :key="item.data.card_id">{{ item.data.card_name.english }}</Option>
-                    </Select>
-                  </FormItem>
-                </div>
-              </Form>
-
-              <!--
-              <h4>Ai</h4>
-              <Form :label-width="200">
-                <FormItem label="Heroes Initial Deployment">
-                  <RadioGroup v-model="hero_flop" :vertical="true">
-                    <Radio label="1">The hero flop is random</Radio>
-                    <Radio label="2">The hero flop is based on deck order</Radio>
-                    <Radio label="3" v-if="match.ai.decks.length == 1">Supply the flop order</Radio>
-                  </RadioGroup>
-                </FormItem>
-
-                <FormItem label="# Heroes to flop" v-if="true">
-                  <Input v-model="initial_heroes_ai" placeholder="3" />
-                </FormItem>
-
-                <div v-if="true">
-                  <FormItem label="Hero for Lane 1">
-                    <Input v-model="hero1_ai" placeholder="..." />
-                  </FormItem>
-                  <FormItem label="Hero for Lane 2">
-                    <Input v-model="hero2_ai" placeholder="..." />
-                  </FormItem>
-                  <FormItem label="Hero for Lane 3">
-                    <Input v-model="hero3_ai" placeholder="..." />
-                  </FormItem>
-                </div>
-              </Form>
-              -->
-
-              <!-- initial_heroes -->
-              <!-- initial_heroes_ai -->
-
-              <!-- heroes_initial_lane_random -->
-              
-              <!-- hero1_player -->
-              <!-- hero2_player -->
-              <!-- hero3_player -->
-              <!-- hero1_ai -->
-              <!-- hero2_ai -->
-              <!-- hero3_ai -->
+              <Divider><strong>Ai</strong></Divider>
+              <HeroDeployment :actor.sync="match.ai" />
 
               <h3>Deployment - Creeps</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Creep Initial Deployment">
+                  <RadioGroup v-model="match.player.rules.creeps.mode" :vertical="true">
+                    <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
+                    <Radio label="2">The creeps toward the left most lane</Radio>
+                    <Radio label="3">The creeps will always land across from heroes</Radio>
+                  </RadioGroup>
+                </FormItem>
+                <FormItem label="Creep List">
+                  <CardList 
+                    v-model="match.player.rules.creeps.list"
+                    :cards="creeps"
+                    :tiles="['Creeps', 'Deployment']" 
+                  />
+                </FormItem>
+                <FormItem label="Creep Count">
+                  <InputNumber :max="100" :min="0" v-model="match.player.rules.creeps.count"></InputNumber>
+                </FormItem>
+              </Form>
+
+              <Divider><strong>Ai</strong></Divider>
 
               <!-- creeps_first_turn -->
               <!-- creeps_first_turn_ai -->
@@ -145,9 +99,9 @@
               <!-- creep_list -->
               <!-- creep_list_ai -->
 
-              <!-- creeps_lanes_player_1each -->
-              <!-- creeps_lanes_random -->
-              <!-- only_flop_across_from_heroes -->
+              <!-- creeps_lanes_player_1each:Tries to spread the creep development evenly to all lanes. Creep Deployment Bunch must be disabled for this to work. -->
+              <!-- creeps_lanes_random:Enabled and all the automatic creeps will bunch toward the left most lane. Creep Development Spread must be disabled for this to work.-->
+              <!-- only_flop_across_from_heroes: randomly deployed units will always land across from heroes 1st -->
 
               <h3>Towers / Ancients</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
@@ -193,7 +147,7 @@
               <!-- units_victory -->
               <!-- kills_victory -->
 
-              <Divider dashed/>
+              <Divider dashed />
               <h2>Each Turn</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
 
@@ -230,6 +184,7 @@
 import CardTransfer from "@/components/CardTransfer.vue";
 import CardList from "@/components/CardList.vue";
 import DeckSelection from "@/components/DeckSelection.vue";
+import HeroDeployment from "@/components/HeroDeployment.vue";
 
 // Deck Code Decoder
 import { decodeDeck } from "node-artifact-api";
@@ -239,7 +194,6 @@ import * as cardsCollection from "@/assets/data/cards.json";
 import * as rulesCollection from "@/assets/data/rules.json";
 import * as matchTempalte from "@/assets/data/match.json";
 import * as actorTempalte from "@/assets/data/actor.json";
-import { timeout } from 'q';
 
 // ID
 let uuidv4 = require("uuid/v4");
@@ -255,7 +209,8 @@ export default {
   components: {
     CardTransfer,
     CardList,
-    DeckSelection
+    DeckSelection,
+    HeroDeployment
   },
   methods: {
     addMatch() {
@@ -283,7 +238,18 @@ export default {
       return [];
     },
     creeps: function () {
-      return [];
+      let sets = cardsCollection.default;
+      let creeps = sets.filter(_ => _.card_type == "Creep");
+      let cards = creeps.map(function(_) { 
+        return {
+          key: uuidv4(),
+          id: _.card_id,
+          label: _.card_name.english,
+          description: _.card_text.english,
+          image: _.large_image.default
+        };
+      });
+      return cards;
     },
     draw: function() {
       return [];
