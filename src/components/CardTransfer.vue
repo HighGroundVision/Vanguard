@@ -38,6 +38,7 @@ export default {
       this.selection.collection = [];
       let value = this.cards.filter(_ => newTargetKeys.includes(_.key) == true);
       this.$emit('input', value);
+      this.$emit('on-change');
     },
     onSelectedChange(sourceSelectedKeys, targetSelectedKeys) {
       if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {

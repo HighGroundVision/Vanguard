@@ -108,9 +108,9 @@ export default {
             for (let i = 0; i < ref.count ; i++) {
               this.actor.deck.cards.library.push({ 
                 key: uuidv4(),
-                id: template.card_id,
-                label: template.card_name.english,
-                image: template.large_image ? template.large_image.default : '', 
+                id: refTemplate.card_id,
+                label: refTemplate.card_name.english,
+                image: refTemplate.large_image ? refTemplate.large_image.default : '', 
                 data: refTemplate 
               });
             }

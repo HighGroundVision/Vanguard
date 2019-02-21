@@ -45,6 +45,7 @@
               <Divider dashed />
               <h2>Setup</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <br />
 
               <h3>Time</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
@@ -233,15 +234,19 @@
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
 
               <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
+              <Form :label-width="200"> 
                 <FormItem label="Draw Order" v-if="match.player.decks.length === 1">
                   <CardTransfer 
-                    v-model="match.player.rules.library.draw"
+                    v-model="match.player.rules.library.order"
                     :cards="match.player.decks[0].cards.library"
                     :tiles="['Library', 'Draw']" 
+                    @on-change="match.player.rules.library.draw = match.player.rules.library.order.length"
                   />
                 </FormItem>
-                <FormItem label="Extra Cards">
+                <FormItem label="# of Cards To Draw">
+                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.library.draw"></InputNumber>
+                </FormItem>
+                <FormItem label="Extra Cards (cards_first_turn)">
                   <CardList 
                     v-model="match.player.rules.library.extra"
                     :cards="draw"
@@ -254,10 +259,14 @@
               <Form :label-width="200">
                 <FormItem label="Draw Order" v-if="match.ai.decks.length === 1">
                   <CardTransfer 
-                    v-model="match.ai.rules.library.draw"
+                    v-model="match.ai.rules.library.order"
                     :cards="match.ai.decks[0].cards.library"
                     :tiles="['Library', 'Draw']" 
+                    @on-change="match.ai.rules.library.draw = match.ai.rules.library.order.length"
                   />
+                </FormItem>
+                <FormItem label="# of Cards To Draw">
+                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.library.draw"></InputNumber>
                 </FormItem>
                 <FormItem label="Extra Cards">
                   <CardList 
@@ -342,16 +351,61 @@
               <Divider dashed />
               <h2>Each Turn</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-
+              <br />
+              
               <h3>Extras</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <!-- mana_boost_per_turn -->
-              <!-- mana_boost_per_turn_ai -->
-              <!-- gold_per_turn -->
-              <!-- gold_per_turn_ai -->
+              
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Mana Boost">
+                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.mana"></InputNumber>
+                </FormItem>
+                <FormItem label="Gold Boost">
+                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.gold"></InputNumber>
+                </FormItem>
+              </Form>
+
+              <Divider><strong>Ai</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Mana Boost">
+                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.mana"></InputNumber>
+                </FormItem>
+                <FormItem label="Gold Boost">
+                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.gold"></InputNumber>
+                </FormItem>
+              </Form>
 
               <h3>Cards</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="# of Cards To Draw">
+                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.draw"></InputNumber>
+                </FormItem>
+                <FormItem label="Extra Cards">
+                  <CardList 
+                    v-model="match.player.rules.turn.free"
+                    :cards="draw"
+                    :tiles="['Cards', 'Extra']" 
+                  />
+                </FormItem>
+              </Form>
+
+              <Divider><strong>Ai</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="# of Cards To Draw">
+                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.draw"></InputNumber>
+                </FormItem>
+                <FormItem label="Extra Cards">
+                  <CardList 
+                    v-model="match.ai.rules.turn.free"
+                    :cards="draw"
+                    :tiles="['Cards', 'Extra']" 
+                  />
+                </FormItem>
+              </Form>
+
               <!-- cards_per_turn -->
               <!-- cards_per_turn_ai -->
 
@@ -360,8 +414,25 @@
 
               <h3>Creeps</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <!-- creeps_per_turn -->
-              <!-- creeps_per_turn_ai -->
+
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="# of Creeps to Deploy">
+                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.creeps"></InputNumber>
+                </FormItem>
+              </Form>
+
+              <Divider><strong>Ai</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="# of Creeps to Deploy">
+                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.creeps"></InputNumber>
+                </FormItem>
+              </Form>
+
+              <Divider dashed />
+              <h2>Flow</h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <br />
 
             </div>
           </Panel>

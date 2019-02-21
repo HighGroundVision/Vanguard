@@ -41,11 +41,19 @@
       "lane_3": 80
     },
     "library": {
-      "draw": [],
+      "order": [],
+      "draw": 7,
       "extra": []
     },
     "store": {
       "order": []
+    },
+    "turn": {
+      "mana": 0,
+      "gold": 0,
+      "free": [],
+      "draw": 2,
+      "creeps": 2
     }
   }
  }
