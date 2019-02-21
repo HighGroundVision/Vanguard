@@ -51,10 +51,10 @@
               
               <Form :label-width="200">
                 <FormItem label="No Timeout">
-                  <i-switch v-model="match.rules.no_shotclock" />
+                  <i-switch v-model="match.rules.clock.no_shotclock" />
                 </FormItem>
-                <FormItem label="Time Per Turn" v-if="match.rules.no_shotclock === false">
-                  <InputNumber :max="9999" :min="0" v-model="match.rules.shotclock_base_time"></InputNumber>
+                <FormItem label="Time Per Turn" v-if="match.rules.clock.no_shotclock === false">
+                  <InputNumber :max="9999" :min="0" v-model="match.rules.clock.shotclock_base_time"></InputNumber>
                 </FormItem>
               </Form>
 
@@ -84,6 +84,7 @@
                     v-model="match.player.rules.creeps.list"
                     :cards="creeps"
                     :tiles="['Creeps', 'Deployment']" 
+                    @on-change="match.player.rules.creeps.count = match.player.rules.creeps.list.length"
                   />
                 </FormItem>
                 <FormItem label="Creep Count">
@@ -92,60 +93,251 @@
               </Form>
 
               <Divider><strong>Ai</strong></Divider>
-
-              <!-- creeps_first_turn -->
-              <!-- creeps_first_turn_ai -->
-
-              <!-- creep_list -->
-              <!-- creep_list_ai -->
-
-              <!-- creeps_lanes_player_1each:Tries to spread the creep development evenly to all lanes. Creep Deployment Bunch must be disabled for this to work. -->
-              <!-- creeps_lanes_random:Enabled and all the automatic creeps will bunch toward the left most lane. Creep Development Spread must be disabled for this to work.-->
-              <!-- only_flop_across_from_heroes: randomly deployed units will always land across from heroes 1st -->
+              <Form :label-width="200">
+                <FormItem label="Creep Initial Deployment">
+                  <RadioGroup v-model="match.ai.rules.creeps.mode" :vertical="true">
+                    <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
+                    <Radio label="2">The creeps toward the left most lane</Radio>
+                    <Radio label="3">The creeps will always land across from heroes</Radio>
+                  </RadioGroup>
+                </FormItem>
+                <FormItem label="Creep List">
+                  <CardList 
+                    v-model="match.ai.rules.creeps.list"
+                    :cards="creeps"
+                    :tiles="['Creeps', 'Deployment']" 
+                    @on-change="match.ai.rules.creeps.count = match.ai.rules.creeps.list.length"
+                  />
+                </FormItem>
+                <FormItem label="Creep Count">
+                  <InputNumber :max="100" :min="0" v-model="match.ai.rules.creeps.count"></InputNumber>
+                </FormItem>
+              </Form>
 
               <h3>Towers / Ancients</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <!-- tower1_health -->
-              <!-- tower2_health -->
-              <!-- tower3_health -->
+              
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="">
+                  <Row>
+                    <i-col span="8">
+                      <h4>Lane 1</h4>
+                    </i-col>
+                    <i-col span="8">
+                      <h4>Lane 2</h4>
+                    </i-col>
+                    <i-col span="8">
+                      <h4>Lane 3</h4>
+                    </i-col>
+                  </Row>
+                </FormItem>
+                <FormItem label="Mana">
+                  <Row>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana.lane_1"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana.lane_2"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana.lane_3"></InputNumber>
+                    </i-col>
+                  </Row>
+                </FormItem>
+                <FormItem label="Tower Health">
+                  <Row>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_1"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_2"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_3"></InputNumber>
+                    </i-col>
+                  </Row>
+                </FormItem>
+                <FormItem label="Ancient Health">
+                  <Row>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_1"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_2"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_3"></InputNumber>
+                    </i-col>
+                  </Row>
+                </FormItem>
+              </Form>
 
-              <!-- tower1_health_ai -->
-              <!-- tower2_health_ai -->
-              <!-- tower3_health_ai -->
-
-              <!-- ancient1_health -->
-              <!-- ancient2_health -->
-              <!-- ancient3_health -->
-
-              <!-- ancient1_health_ai -->
-              <!-- ancient2_health_ai -->
-              <!-- ancient3_health_ai -->
-
-              <!-- initial_mana -->
-              <!-- initial_mana_ai -->
-
+              <Divider><strong>Ai</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="">
+                  <Row>
+                    <i-col span="8">
+                      <h4>Lane 1</h4>
+                    </i-col>
+                    <i-col span="8">
+                      <h4>Lane 2</h4>
+                    </i-col>
+                    <i-col span="8">
+                      <h4>Lane 3</h4>
+                    </i-col>
+                  </Row>
+                </FormItem>
+                <FormItem label="Mana">
+                  <Row>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana.lane_1"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana.lane_2"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana.lane_3"></InputNumber>
+                    </i-col>
+                  </Row>
+                </FormItem>
+                <FormItem label="Tower Health">
+                  <Row>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_1"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_2"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_3"></InputNumber>
+                    </i-col>
+                  </Row>
+                </FormItem>
+                <FormItem label="Ancient Health">
+                  <Row>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_1"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_2"></InputNumber>
+                    </i-col>
+                    <i-col span="8">
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_3"></InputNumber>
+                    </i-col>
+                  </Row>
+                </FormItem>
+              </Form>
+ 
               <h3>Library</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <!-- draw_order -->
-              <!-- draw_order_ai -->
-              <!-- cards_first_turn -->
-              <!-- cards_first_turn_ai -->
+
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Draw Order" v-if="match.player.decks.length === 1">
+                  <CardTransfer 
+                    v-model="match.player.rules.library.draw"
+                    :cards="match.player.decks[0].cards.library"
+                    :tiles="['Library', 'Draw']" 
+                  />
+                </FormItem>
+                <FormItem label="Extra Cards">
+                  <CardList 
+                    v-model="match.player.rules.library.extra"
+                    :cards="draw"
+                    :tiles="['Cards', 'Extra']" 
+                  />
+                </FormItem>
+              </Form>
+
+              <Divider><strong>Ai</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Draw Order" v-if="match.ai.decks.length === 1">
+                  <CardTransfer 
+                    v-model="match.ai.rules.library.draw"
+                    :cards="match.ai.decks[0].cards.library"
+                    :tiles="['Library', 'Draw']" 
+                  />
+                </FormItem>
+                <FormItem label="Extra Cards">
+                  <CardList 
+                    v-model="match.ai.rules.library.extra"
+                    :cards="draw"
+                    :tiles="['Cards', 'Extra']" 
+                  />
+                </FormItem>
+              </Form>
 
               <h3>Combat</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <!-- ai_pass_chance_multiplier -->
-              <!-- force_combat_manager_rand_to_zero -->
-              <!-- ai_action_choice_non_random -->
+
+              <Divider><strong>Ai</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Pass Chance Multiplier">
+                  <Slider v-model="match.rules.combat.ai_pass_chance_multiplier" show-input></Slider>
+                </FormItem>
+                <FormItem label="Play In Draw Order">
+                  <i-switch v-model="match.rules.combat.ai_action_choice_non_random" />
+                </FormItem>
+              </Form>
 
               <h3>Shopping</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <!-- store_enabled -->
+              <br />
+
+              <Divider><strong>General</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Store Enabled">
+                  <i-switch v-model="match.rules.store.enabled" />
+                </FormItem>
+              </Form>
+              
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Shop Order" v-if="match.player.decks.length === 1">
+                  <CardTransfer 
+                    v-model="match.player.rules.store.order"
+                    :cards="match.player.decks[0].cards.items"
+                    :tiles="['Store', 'Order']" 
+                  />
+                </FormItem>
+                <FormItem label="Secret Shop Item">
+                  <span>...</span>
+                </FormItem>
+              </Form>
+
+              <Divider><strong>Ai</strong></Divider>
+              <Form :label-width="200">
+                <FormItem label="Shop Order" v-if="match.ai.decks.length === 1">
+                  <CardTransfer 
+                    v-model="match.ai.rules.store.order"
+                    :cards="match.ai.decks[0].cards.items"
+                    :tiles="['Store', 'Order']" 
+                  />
+                </FormItem>
+                <FormItem label="Secret Shop Item">
+                  <span>...</span>
+                </FormItem>
+              </Form>
 
               <h3>Victory</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-              <!-- gold_victory -->
-              <!-- units_victory -->
-              <!-- kills_victory -->
+
+              <br />
+              <Form :label-width="200">
+                <FormItem label="Gold">
+                  <i-switch v-model="match.rules.victory.gold_flag" />
+                  <InputNumber :max="9999" :min="0" v-model="match.rules.victory.gold_amount" v-if="match.rules.victory.gold_flag" class="step-right"></InputNumber>
+                </FormItem>
+                <FormItem label="Units">
+                  <i-switch v-model="match.rules.victory.units_flag" />
+                  <InputNumber :max="9999" :min="0" v-model="match.rules.victory.units_amount" v-if="match.rules.victory.units_flag" class="step-right"></InputNumber>
+                </FormItem>
+                <FormItem label="Kills">
+                  <i-switch v-model="match.rules.victory.kills_flag" />
+                  <InputNumber :max="9999" :min="0" v-model="match.rules.victory.kills_amount" v-if="match.rules.victory.kills_flag" class="step-right"></InputNumber>
+                </FormItem>
+              </Form>
 
               <Divider dashed />
               <h2>Each Turn</h2>
@@ -245,14 +437,25 @@ export default {
           key: uuidv4(),
           id: _.card_id,
           label: _.card_name.english,
-          description: _.card_text.english,
-          image: _.large_image.default
+          image: _.large_image ? _.large_image.default : '',
+          data: _
         };
       });
       return cards;
     },
     draw: function() {
-      return [];
+      let sets = cardsCollection.default;
+      let libray = sets.filter(_ => _.mana_cost != undefined);
+      let cards = libray.map(function(_) {
+        return {
+          key: uuidv4(),
+          id: _.card_id,
+          label: _.card_name.english,
+          image: _.large_image ? _.large_image.default : '',
+          data: _
+        };
+      });
+      return cards;
     },
   },
   data() {

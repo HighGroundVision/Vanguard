@@ -71,6 +71,7 @@ export default {
         this.source = source;
         this.target = [];
         this.$emit('input', []);
+        this.$emit('on-change');
       } else if(direction == 'right') {
         let movement = this.source.filter(_ => keys.includes(_.key) == true);
         let copies = copyCollection(movement);
@@ -80,12 +81,14 @@ export default {
         this.target = targets;
         let value = this.source.filter(_ => targets.includes(_.key) == true);
         this.$emit('input', value);
+        this.$emit('on-change');
       } else if(direction == 'left') {
         this.source = this.source.filter(_ => keys.includes(_.key) == false);
 
         this.target = targets;
         let value = this.source.filter(_ => targets.includes(_.key) == true);
         this.$emit('input', value);
+        this.$emit('on-change');
       }
     }
   },

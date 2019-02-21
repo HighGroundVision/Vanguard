@@ -56,7 +56,7 @@ export default {
     }
   },
   computed: {
-    source: function () {    
+    source: function () {
       let source = this.cards;
       source.sort(function(lhs, rhs) {
         return lhs.label.localeCompare(rhs.label);

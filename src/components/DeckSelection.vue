@@ -38,19 +38,19 @@
             <Divider>Heroes</Divider>
               <template v-for="(card) in deck.cards.heroes">
                 <div :key="card.key">
-                  <img :src="card.data.large_image.default" style="width: 300px;">
+                  <img :src="card.image" style="width: 300px;">
                 </div>
               </template>
               <Divider>Library</Divider>
               <template v-for="(card) in deck.cards.library">
                 <div :key="card.key">
-                  <img :src="card.data.large_image.default" style="width: 300px;">
+                  <img :src="card.image" style="width: 300px;">
                 </div>
               </template>
               <Divider>Items</Divider>
               <template v-for="(card) in deck.cards.items">
                 <div :key="card.key">
-                  <img :src="card.data.large_image.default" style="width: 300px;">
+                  <img :src="card.image" style="width: 300px;">
                 </div>
               </template>
           </Drawer>
@@ -93,13 +93,26 @@ export default {
 
       for (const item of deck.heroes) {
         let template = sets.find(function(_) { return _.card_id == item.id; });
-         this.actor.deck.cards.heroes.push({ key: uuidv4(), data: template, turn: item.turn });
+        this.actor.deck.cards.heroes.push({ 
+          key: uuidv4(),
+          id: template.card_id,
+          label: template.card_name.english,
+          image: template.large_image ? template.large_image.default : '', 
+          data: template, 
+          turn: item.turn 
+        });
 
         for (const ref of template.references) {
           if (ref.ref_type == "includes") {
             let refTemplate = sets.find(function(_) { return _.card_id == ref.card_id; });
             for (let i = 0; i < ref.count ; i++) {
-              this.actor.deck.cards.library.push({ key: uuidv4(), data: refTemplate });
+              this.actor.deck.cards.library.push({ 
+                key: uuidv4(),
+                id: template.card_id,
+                label: template.card_name.english,
+                image: template.large_image ? template.large_image.default : '', 
+                data: refTemplate 
+              });
             }
           }
         }
@@ -108,9 +121,21 @@ export default {
         let template = sets.find(function(_) { return _.card_id == item.id; });
         for (let i = 0; i < item.count ; i++) {
           if(template.card_type == "Item") {
-            this.actor.deck.cards.items.push({ key: uuidv4(), data: template });
+            this.actor.deck.cards.items.push({ 
+              key: uuidv4(),
+              id: template.card_id,
+              label: template.card_name.english,
+              image: template.large_image ? template.large_image.default : '', 
+              data: template 
+            });
           } else {
-            this.actor.deck.cards.library.push({ key: uuidv4(), data: template });
+            this.actor.deck.cards.library.push({ 
+              key: uuidv4(),
+              id: template.card_id,
+              label: template.card_name.english,
+              image: template.large_image ? template.large_image.default : '', 
+              data: template 
+            });
           }
         }
       }

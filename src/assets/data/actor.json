@@ -24,6 +24,29 @@
       "mode": "0",
       "list": [],
       "count": 0
+    },
+    "towers":{
+      "lane_1": 40,
+      "lane_2": 40,
+      "lane_3": 40
+    },
+    "mana":{
+      "lane_1": 3,
+      "lane_2": 3,
+      "lane_3": 3
+    },
+    "ancient":{
+      "lane_1": 80,
+      "lane_2": 80,
+      "lane_3": 80
+    },
+    "library": {
+      "draw": [],
+      "extra": []
+    },
+    "store": {
+      "order": []
     }
   }
  }
+ 
