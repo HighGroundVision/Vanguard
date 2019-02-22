@@ -77,8 +77,8 @@
                 <FormItem label="Creep Initial Deployment">
                   <RadioGroup v-model="match.player.rules.creeps.mode" :vertical="true">
                     <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
-                    <Radio label="2">The creeps toward the left most lane</Radio>
-                    <Radio label="3">The creeps will always land across from heroes</Radio>
+                    <Radio label="2">The creeps toward lane 1 the frist</Radio>
+                    <Radio label="3">The creeps will always land across from heroes frist</Radio>
                   </RadioGroup>
                 </FormItem>
                 <FormItem label="Creep List">
