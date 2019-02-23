@@ -99,11 +99,16 @@ export default {
 
     let target = this.value.map(_ => _.key);
 
+    let image = require('../assets/imgs/empty.png'); 
+    if(this.value.length == 1) {
+      image = this.value[0].image;
+    }
+
     return {
       source: source,
       target: target,
       selection: {
-        image: require('../assets/imgs/empty.png'),
+        image: image,
         collection: [],
       }
     };

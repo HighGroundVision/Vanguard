@@ -69,9 +69,14 @@ export default {
     }
   },
   data() {
+    let image = require('../assets/imgs/empty.png'); 
+    if(this.value.length == 1) {
+      image = this.value[0].image;
+    }
+
     return {
       selection: {
-        image: require('../assets/imgs/empty.png'),
+        image: image,
         collection: [],
       }
     };

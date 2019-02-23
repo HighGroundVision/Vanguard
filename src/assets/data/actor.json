@@ -1,5 +1,5 @@
 {
-  "mode": "1",
+  "mode": "2",
   "deck": {
     "show": false,
     "code": "ADCJdcKJX2kvAFNCQumuwKGsQGUqgGDkagBh4OlAaQDhVtCXSBTZWlnZXI_",
@@ -14,16 +14,16 @@
   "decks": [],
   "rules": {
     "flop": {
-      "mode": "0",
+      "mode": "1",
       "heroes": 3,
       "lane_1": 0,
       "lane_2": 0,
       "lane_3": 0
     },
     "creeps": {
-      "mode": "0",
+      "mode": "1",
       "list": [],
-      "count": 0
+      "count": 3
     },
     "towers":{
       "lane_1": 40,
@@ -46,7 +46,8 @@
       "extra": []
     },
     "store": {
-      "order": []
+      "order": [],
+      "secret": 0
     },
     "turn": {
       "mana": 0,

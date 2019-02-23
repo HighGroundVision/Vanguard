@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
+    "downloadjs": "^1.4.7",
     "iview": "^3.0.1",
     "node-artifact-api": "^0.4.2",
+    "underscore.string": "^3.3.5",
     "uuid": "^3.3.2",
     "vue": "^2.5.22",
     "vue-router": "^3.0.1",

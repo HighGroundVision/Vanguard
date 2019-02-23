@@ -10,8 +10,11 @@
     "store": {
       "enabled": true
     },
+    "deployment": {
+      "pathing_force": "Random"
+    },
     "combat": {
-      "ai_pass_chance_multiplier": 0,
+      "ai_pass_chance_multiplier": 50,
       "force_combat_manager_rand_to_zero": false,
       "ai_action_choice_non_random": false
     },

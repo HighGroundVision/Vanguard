@@ -25,6 +25,9 @@
         "mode": "0",
         "list": [],
         "count": 0
+      },
+      "store": {
+        "secret": 0
       }
     },
     "ai": {
@@ -40,6 +43,9 @@
         "mode": "0",
         "list": [],
         "count": 0
+      },
+      "store": {
+        "secret": 0
       }
     }
   },
@@ -53,6 +59,9 @@
     },
     "combat": {
       "ai_pass_chance_multiplier": 0
+    },
+    "deployment": {
+      "pathing_force": "Random"
     },
     "victory": {
       "gold_flag": false,
