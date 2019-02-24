@@ -11,7 +11,8 @@
       "enabled": true
     },
     "deployment": {
-      "pathing_force": "Random"
+      "pathing_force": "Random",
+      "mode": "1"
     },
     "combat": {
       "ai_pass_chance_multiplier": 50,

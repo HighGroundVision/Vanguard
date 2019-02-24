@@ -21,7 +21,6 @@
       "lane_3": 0
     },
     "creeps": {
-      "mode": "1",
       "list": [],
       "count": 3
     },
@@ -30,11 +29,7 @@
       "lane_2": 40,
       "lane_3": 40
     },
-    "mana":{
-      "lane_1": 3,
-      "lane_2": 3,
-      "lane_3": 3
-    },
+    "mana": 3,
     "ancient":{
       "lane_1": 80,
       "lane_2": 80,
@@ -42,8 +37,7 @@
     },
     "library": {
       "order": [],
-      "draw": 7,
-      "extra": []
+      "draw": 7
     },
     "store": {
       "order": [],

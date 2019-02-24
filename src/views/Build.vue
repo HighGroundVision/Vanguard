@@ -82,17 +82,17 @@
                     <Option value="Forward Path" >Forward</Option>
                   </Select>
                 </FormItem>
-              </Form>
-
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Creep Initial Deployment">
-                  <RadioGroup v-model="match.player.rules.creeps.mode" :vertical="true">
+                <FormItem label="Mode">
+                  <RadioGroup v-model="match.rules.deployment.mode" :vertical="true">
                     <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
                     <Radio label="2">The creeps toward lane 1 the frist</Radio>
                     <Radio label="3">The creeps will always land across from heroes frist</Radio>
                   </RadioGroup>
                 </FormItem>
+              </Form>
+
+              <Divider><strong>Player</strong></Divider>
+              <Form :label-width="200">
                 <FormItem label="Creep List">
                   <CardList 
                     v-model="match.player.rules.creeps.list"
@@ -107,13 +107,6 @@
 
               <Divider><strong>Ai</strong></Divider>
               <Form :label-width="200">
-                <FormItem label="Creep Initial Deployment">
-                  <RadioGroup v-model="match.ai.rules.creeps.mode" :vertical="true">
-                    <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
-                    <Radio label="2">The creeps toward the left most lane</Radio>
-                    <Radio label="3">The creeps will always land across from heroes</Radio>
-                  </RadioGroup>
-                </FormItem>
                 <FormItem label="Creep List">
                   <CardList 
                     v-model="match.ai.rules.creeps.list"
@@ -147,13 +140,13 @@
                 <FormItem label="Mana">
                   <Row>
                     <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana.lane_1"></InputNumber>
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
                     </i-col>
                     <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana.lane_2"></InputNumber>
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
                     </i-col>
                     <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana.lane_3"></InputNumber>
+                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
                     </i-col>
                   </Row>
                 </FormItem>
@@ -203,13 +196,13 @@
                 <FormItem label="Mana">
                   <Row>
                     <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana.lane_1"></InputNumber>
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
                     </i-col>
                     <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana.lane_2"></InputNumber>
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
                     </i-col>
                     <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana.lane_3"></InputNumber>
+                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
                     </i-col>
                   </Row>
                 </FormItem>
@@ -256,13 +249,6 @@
                 <FormItem label="# of Cards To Draw">
                   <InputNumber :max="9999" :min="0" v-model="match.player.rules.library.draw"></InputNumber>
                 </FormItem>
-                <FormItem label="Extra Cards">
-                  <CardList 
-                    v-model="match.player.rules.library.extra"
-                    :cards="draw"
-                    :tiles="['Cards', 'Extra']" 
-                  />
-                </FormItem>
               </Form>
 
               <Divider><strong>Ai</strong></Divider>
@@ -276,13 +262,6 @@
                 </FormItem>
                 <FormItem label="# of Cards To Draw">
                   <InputNumber :max="9999" :min="0" v-model="match.ai.rules.library.draw"></InputNumber>
-                </FormItem>
-                <FormItem label="Extra Cards">
-                  <CardList 
-                    v-model="match.ai.rules.library.extra"
-                    :cards="draw"
-                    :tiles="['Cards', 'Extra']" 
-                  />
                 </FormItem>
               </Form>
 
@@ -649,7 +628,7 @@
 
       <Divider dashed/>
       <div>
-        <Button type="success" @click="exportPuzzle">Export</Button>
+        <Button type="success" @click="downloadPuzzle">Export</Button>
       </div>
 
     </Card>
@@ -730,8 +709,10 @@ export default {
     removeFlow(match, key) {
       match.sequence.flows = match.sequence.flows.filter(_ => _.key != key);
     },
-    exportPuzzle() {
+    downloadPuzzle() {
+      // let template = document.getElementById("vdf-text").value
       let data = exportPuzzle(this.puzzle);
+      //console.log("File", data);
       download(data.body, data.name + ".txt", "text/plain");
     }
   },
@@ -784,10 +765,6 @@ export default {
   },
   data() {
     return {
-      test: {
-        input: '',
-        switch: false,
-      },
       puzzle: {
         name: "Test Puzzle",
         description: "My frist puzzle",
@@ -796,9 +773,6 @@ export default {
       options: {
         match: {
           active: "0",
-        },
-        sequence: {
-          turns: 3,
         }
       }
     };
