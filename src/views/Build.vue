@@ -820,7 +820,7 @@ export default {
     downloadPuzzle() {
       // let template = document.getElementById("vdf-text").value
       let data = exportPuzzle(this.puzzle);
-      download(data.body, this.filename + ".txt", "text/plain");
+      download(data, this.filename + ".txt", "text/plain");
     }
   },
   computed: {
