@@ -11,9 +11,6 @@
         <FormItem label="Name">
           <Input v-model="puzzle.name" placeholder="..." />
         </FormItem>
-        <FormItem label="Description">
-          <Input v-model="puzzle.description" placeholder="..." />
-        </FormItem>
       </Form>
       <Divider dashed/>
 
@@ -291,19 +288,19 @@
               
               <Divider><strong>Player</strong></Divider>
               <Form :label-width="200">
+                <FormItem label="Secret Shop">
+                  <Select v-model="match.rules.store.secret">
+                    <Option :value="0" >Random</Option>
+                    <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
+                  </Select>
+                </FormItem>
                 <FormItem label="Shop Order" v-if="match.player.decks.length === 1">
                   <CardTransfer 
                     v-model="match.player.rules.store.order"
                     :cards="match.player.decks[0].cards.items"
                     :tiles="['Store', 'Order']" 
                   />
-                </FormItem>
-                <FormItem label="Secret Shop Item">
-                  <Select v-model="match.player.rules.store.secret">
-                    <Option :value="0" >Random</Option>
-                    <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
-                  </Select>
-                </FormItem>
+                </FormItem>  
               </Form>
 
               <Divider><strong>Ai</strong></Divider>
@@ -314,12 +311,6 @@
                     :cards="match.ai.decks[0].cards.items"
                     :tiles="['Store', 'Order']" 
                   />
-                </FormItem>
-                <FormItem label="Secret Shop Item">
-                  <Select v-model="match.ai.rules.store.secret">
-                    <Option :value="0" >Random</Option>
-                    <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
-                  </Select>
                 </FormItem>
               </Form>
 
@@ -494,15 +485,8 @@
                         <i-switch v-model="match.sequence.flow.rules.store.enabled" />
                       </FormItem>
                       <Divider><strong>Player</strong></Divider>
-                      <FormItem label="Secret Shop Item">
-                        <Select v-model="match.sequence.flow.actors.player.store.secret">
-                          <Option :value="0" >Random</Option>
-                          <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
-                        </Select>
-                      </FormItem>
-                      <Divider><strong>Ai</strong></Divider>
-                      <FormItem label="Secret Shop Item">
-                        <Select v-model="match.sequence.flow.actors.ai.store.secret">
+                      <FormItem label="Secret Shop">
+                        <Select v-model="match.sequence.flow.rules.store.secret">
                           <Option :value="0" >Random</Option>
                           <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
                         </Select>
@@ -767,7 +751,6 @@ export default {
     return {
       puzzle: {
         name: "Test Puzzle",
-        description: "My frist puzzle",
         matches: []
       },
       options: {

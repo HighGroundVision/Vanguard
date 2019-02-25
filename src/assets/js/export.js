@@ -16,36 +16,43 @@ export function exportPuzzle(puzzle) {
       validator: {}
     };
 
-    for (let d = 0; d < match.player.decks.length; d++) {
-      const deck = match.player.decks[d];
-      let additional_deck = {
-        name: deck.name,
-        code: deck.code,
-        description: "",
-        tags: ""
-      };
-      actor_player.additional_decks[`player_deck${d}`] = additional_deck;
+    if(match.player.decks.length > 1) {
+      for (let d = 0; d < match.player.decks.length; d++) {
+        const deck = match.player.decks[d];
+        let additional_deck = {
+          name: deck.name,
+          code: deck.code,
+          description: "",
+          tags: ""
+        };
+        actor_player.additional_decks[`player_deck${d}`] = additional_deck;
+      }
     }
 
     let actor_ai = {
-      use_deck: match.player.decks.length == 1 ? match.player.decks[0].code : "",
+      use_deck: match.ai.decks.length == 1 ? match.ai.decks[0].code : "",
       allow_user_decks: match.player.mode == "2" ? "1" : "0",
       additional_decks: {},
       validator: {}
     };
 
-    for (let d = 0; d < match.ai.decks.length; d++) {
-      const deck = match.ai.decks[d];
-      let additional_deck = {
-        name: deck.name,
-        code: deck.code,
-        description: "",
-        tags: ""
-      };
-      actor_player.additional_decks[`ai_deck${d}`] = additional_deck;
+    if(match.ai.decks.length > 1) {
+      for (let d = 0; d < match.ai.decks.length; d++) {
+        const deck = match.ai.decks[d];
+        let additional_deck = {
+          name: deck.name,
+          code: deck.code,
+          description: "",
+          tags: ""
+        };
+        actor_ai.additional_decks[`ai_deck${(d+1)}`] = additional_deck;
+      }
     }
+    
 
     var section = {
+      name:	"",
+			description: "",
       rules: {
         deck_player: actor_player,
         deck_ai: actor_ai,
@@ -123,12 +130,13 @@ export function exportPuzzle(puzzle) {
     // Combat
     section.rules["ai_pass_chance_multiplier"] = match.rules.combat.ai_pass_chance_multiplier;
     section.rules["ai_action_choice_non_random"] = match.rules.combat.ai_action_choice_non_random;
+    //TODO Add "convar scale_ai_difficulty 0.1"
     // Shopping
     section.rules["store_enabled"] = match.rules.store.enabled ? "1" : "0";
     if(match.player.rules.store.order.length > 0) {
       section.rules["shop_order"] =  match.player.rules.store.order.map(_ => _.id)
     }
-    if(match.rules.store.secret != 0) {
+    if(match.rules.store.secret != "0") {
       section.rules["secretshop_force"] = match.rules.store.secret;
     }
     // Victory
@@ -159,19 +167,52 @@ export function exportPuzzle(puzzle) {
 
     // Flow
     if( match.sequence.flows.length > 0) {
-      match.sequence.flows.sort(function(lhs, rhs) { return (lhs.turn == rhs.turn) ? rhs.lane - lhs.lane : rhs.turn - lhs.turn; });
-      let max_turns = match.sequence.flows[0].turn + 1;
+      // match.sequence.flows.sort(function(lhs, rhs) { return (lhs.turn == rhs.turn) ? rhs.lane - lhs.lane : rhs.turn - lhs.turn; });
+      let max_turns = match.sequence.flows[match.sequence.flows.length-1].turn;
+      let max_lane = match.sequence.flows[match.sequence.flows.length-1].lane;
       let flow = [];
       for (let t = 1; t <= max_turns; t++) {
         for (let l = 1; l <= 3; l++) {
           flow.push({ turn:t,lane:l });
+
+          if(t == max_turns && l == max_lane) break;
         }
       }
       for (let s=0, f=1; s < flow.length; s++,f++) {
         let sequence = {};
-        let events = [];
+        let events = match.sequence.flows
+          .filter(_ => _.turn == flow[s].turn && _.lane == flow[s].lane)
+          .map(_ => {
+            if(_.mode == "1") {
+              if(_.command == "1") {
+                return "quit";
+              } else if(_.command == "2") {
+                return "concommand dcg_opponent_concede";
+              } else if(_.command == "3") {
+                return `load_section part${_.commands.load_section}`;
+              } else if(_.command == "4") {
+                return `load_puzzle ${_.commands.load_puzzle}`;
+              }
+            } else if(_.mode == "2") {
+              return "<action>";
+            }
+            // event.rule
+            // - event.actors
+            // - event.rules
+          });
 
-        if(f < flow.length ) {
+        for (let e = 0; e < events.length; e++) {
+          const event = events[e];
+          if(e == 0) {
+            sequence["auto"] = event;
+          } else if (e == 1) {
+            sequence[">"] = [event];
+          } else {
+            sequence[">"].push(event);
+          }
+        }
+
+        if(f < flow.length) {
           let next = `turn${flow[f].turn}lane${flow[f].lane}`;
           sequence["on_next_lane"] = `goto ${next}`;
         }
@@ -181,13 +222,15 @@ export function exportPuzzle(puzzle) {
       }
     }
 
-    sections[`part${i}`] = section;
+    sections[`part${(i+1)}`] = section;``
   }
 
+  var now = new Date();
   let data = {};
   data[`${name}`] = {
     name: puzzle.name,
-    description: puzzle.description,
+    description: `This puzzle was automatically generated by HGV.Vanguard on ${now.toDateString()}`,
+    // defaultselection:"1"
     sections: sections
   };
 

@@ -8,7 +8,8 @@
       "shotclock_base_time": 45
     },    
     "store": {
-      "enabled": true
+      "enabled": true,
+      "secret": 0
     },
     "deployment": {
       "pathing_force": "Random",
