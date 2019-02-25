@@ -4,7 +4,15 @@
   <div class="build">
     <Card>
       <h1>Build Puzzle</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+      <p>
+        Currently you can create the puzzles and then download them locally.
+        This means you can not save puzzles currently.
+        We want to add, in the future, a system to save, publish and share your puzzles with others.
+      </p>
+      <p>
+        Although we have a lot of options we do not cover every use case.
+        We only handled the most common ones, if you come across a element, rule, command, etc. that you think should be added reach out to us.
+      </p>
       <Divider dashed/>
 
       <Form :label-width="200">
@@ -14,7 +22,11 @@
       </Form>
       <Divider dashed/>
 
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+      <h2>Matches</h2>
+      <p>Each match is a different game of Artifact. This is like how the tutorial forces you play the two matches before the rest of the game is unlocked.</p>
+      <p>You should not need more then one match, but we left the option open for those that want to do a gauntlet of matches.</p>
+      <br />
+      <Alert type="error">WARNING: Artifact seems to lock the player into these matches until the collection of matches is over. This could be very annoying for the player.</Alert>
       <br />
 
       <div>
@@ -24,14 +36,19 @@
 
       <Collapse v-model="options.match.active" accordion>
         <template v-for="(match, skey) in puzzle.matches">
-          <Panel :key="match.key" :name="skey.toString()">
+          <Panel :key="match.key" :name="match.key">
             {{ getMatchName(skey) }}
             <Button type="error" class="float-right" @click="removeMatch(match.key)">Remove</Button>
             <div slot="content">
-              
-              
+ 
               <h2>Decks</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                Each side needs a deck. The simplest option is let the player supply the decks for both the player and Ai.
+              </p>
+              <p>
+                When you supply the decks you can supply one or multiple if you want to user to pick from a collection.
+                But some options are only available if you supply a single valid deck, this is because the deck needs to be known to use these options.
+              </p>
               <br />
 
               <Divider><strong>Player</strong></Divider>
@@ -42,11 +59,22 @@
               
               <Divider dashed />
               <h2>Setup</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                These are the initial Rules that can be controlled at the begin of the match.
+                Some of these Rules can be changed during the flow of the match.
+                Some sections will list additional rules we are looking to implement.
+                Rules are either general and apply to both sides, or they apply to the player or Ai.
+              </p>
+              <br />
+              <Alert type="info">NOTE: If the default are not inline with a regular match please let use know so we can fixed it.</Alert>
               <br />
 
               <h3>Time</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <AdditionalRules :rules="['shotclock_only','time_penalty_for_expired_shot_clock']" />
+              <p>
+                These are rules that control the flow of time in the match.
+                If timeout is enabled and what the value of say timeout would be.
+              </p>
               
               <Form :label-width="200">
                 <FormItem label="No Timeout">
@@ -58,7 +86,11 @@
               </Form>
 
               <h3>Deployment - Heroes</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <AdditionalRules :rules="['deploy_heroes_enabled', 'this_turn_hero_deployment_order']" />
+              <p>
+                These are rules that control the initial hero deployment, better known as the flop.
+                This includes the number of heroes to flop and which lane the heroes are deployed to.
+              </p>
 
               <Divider><strong>Player</strong></Divider>
               <HeroDeployment :actor.sync="match.player" />
@@ -67,7 +99,18 @@
               <HeroDeployment :actor.sync="match.ai" />
 
               <h3>Deployment - Creeps</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                These are rules that control the initial creep development.
+                This includes the pathing, spread, list, and amount.
+              </p>
+              <p>
+                The creep amount and counts do not need to match, but the number should be at least equal to the number of creeps in the list so that one of each will spawn. 
+                If you want more of each type then use the increase the count. You can also increase the odds of deployment by adding the same creep multiple times.
+              </p>
+              <br />
+              <Alert type="info">
+                EXAMPLE: Two Meele Creeps and one Centaur Hunter is added to creep list but the count is one. This means that the odds of getting a Meele Creep is 2/3 vs 1/3 for a Centaur Hunter.
+              </Alert>
               
               <Divider><strong>General</strong></Divider>
               <Form :label-width="200">
@@ -82,8 +125,8 @@
                 <FormItem label="Mode">
                   <RadioGroup v-model="match.rules.deployment.mode" :vertical="true">
                     <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
-                    <Radio label="2">The creeps toward lane 1 the frist</Radio>
-                    <Radio label="3">The creeps will always land across from heroes frist</Radio>
+                    <Radio label="2">The creeps toward lane 1 the first</Radio>
+                    <Radio label="3">The creeps will always land across from heroes first</Radio>
                   </RadioGroup>
                 </FormItem>
               </Form>
@@ -117,7 +160,11 @@
               </Form>
 
               <h3>Towers / Ancients</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <AdditionalRules :rules="['tower_armor', 'tower_current_mana', 'tower_attribute']" />
+              <p>
+                These are rules that control the structures setup.
+                This includes the initial mana, tower health in each lane, and ancient health in each lane.
+              </p>
               
               <Divider><strong>Player</strong></Divider>
               <Form :label-width="200">
@@ -232,8 +279,16 @@
               </Form>
  
               <h3>Library</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-
+              <AdditionalRules :rules="['card_draw_initial', 'can_have_duplicates', 'can_have_signatures']" />
+              <p>
+                These are rules that control the library. This is different then your deck, as these are just the cards you draw.
+                This includes the initial library order and draw amount.
+              </p>
+              <br />
+              <Alert type="info">
+                NOTE: The library order is only available if you have set a single deck.
+              </Alert>
+  
               <Divider><strong>Player</strong></Divider>
               <Form :label-width="200"> 
                 <FormItem label="Draw Order" v-if="match.player.decks.length === 1">
@@ -263,7 +318,11 @@
               </Form>
 
               <h3>Combat</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <AdditionalRules :rules="['pass_to_combat', 'ai_lookahead_limit', 'scale_ai_difficulty']" />
+              <p>
+                These are rules that control the Ai's combat.
+                This includes the pass change and play in draw order options.
+              </p>
 
               <Divider><strong>Ai</strong></Divider>
               <Form :label-width="200">
@@ -276,7 +335,14 @@
               </Form>
 
               <h3>Shopping</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                These are rules that control the shopping phase.
+                This includes if the shop is enabled the store order and forcing the secret shop item.
+              </p>
+              <br />
+              <Alert type="info">
+                NOTE: The shop order is only available if you have set a single deck.
+              </Alert>
               <br />
 
               <Divider><strong>General</strong></Divider>
@@ -315,9 +381,15 @@
               </Form>
 
               <h3>Victory</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
-
+              <p>
+                These are rules that add more victory conditions
+                This includes gold, units, and kills.
+              </p>
+              <p>
+                These just add another victory condition, the match will end when normal conditions are satisfied even if these options are enabled. 
+              </p>
               <br />
+
               <Form :label-width="200">
                 <FormItem label="Gold">
                   <i-switch v-model="match.rules.victory.gold_flag" />
@@ -335,11 +407,18 @@
 
               <Divider dashed />
               <h2>Each Turn</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                Although you can update most rules each turn using flows. 
+                Sometimes it is just simpler to set the value and let the engine do the work. 
+                Each of these rules run each turn.
+              </p>
               <br />
               
               <h3>Extras</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                These are rules that add bonuses to each side ever turn.
+                This includes gold and mana.
+              </p>
               
               <Divider><strong>Player</strong></Divider>
               <Form :label-width="200">
@@ -362,7 +441,15 @@
               </Form>
 
               <h3>Cards</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                These are rules that control the cards drawn each turn.
+                This includes the amount of cards to draw and any additional cards.
+              </p>
+              <br />
+              <Alert type="info">
+                NOTE: These additional cards are not drawn from the deck but are created on fly.
+              </Alert>
+
               <Divider><strong>Player</strong></Divider>
               <Form :label-width="200">
                 <FormItem label="# of Cards To Draw">
@@ -392,7 +479,15 @@
               </Form>
 
               <h3>Creeps</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                These are rules that control how creeps are deployed each turn.
+                This includes the amount of creeps from the creep list. 
+                This is so that initial can be different then each turn.
+              </p>
+              <br />
+              <Alert type="info">
+                NOTE: You can use the flow to change the creep list and amount each turn.
+              </Alert>
 
               <Divider><strong>Player</strong></Divider>
               <Form :label-width="200">
@@ -411,7 +506,18 @@
 
               <Divider dashed />
               <h2>Flow</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+              <p>
+                The flow of the match is not something you can control only react to. 
+                To this end we have hidden a lot of mess of track turns and lanes. 
+                So you can just state what you wish to change when and the system will handle building the correct sequence so that event will be triggered in correct turn and lane.
+              </p>
+              <br />
+              <Alert type="info">
+                NOTE: Shopping and Deployment happen between lane 3 and and lane 1 of next turn. 
+                So if you want to change the shop or deployment options you should do it on lane 3 so they are active before the shopping and deployment.
+                <br />
+                Like wise if you want to the player to auto quit at the end of 3 turn then the player quit command should be on turn 4 lane 1.
+              </Alert>
               <br />
 
               <div>
@@ -425,7 +531,9 @@
                 title="Sequence Flow"
                 width="1000">
                 
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet odio quis est imperdiet tristique. Praesent congue interdum massa at semper. Morbi sit amet auctor elit. Morbi eros leo, tempor eget mattis viverra, tincidunt sed mauris. Quisque id bibendum tellus. Phasellus a est at mauris congue pulvinar. Pellentesque non nunc et orci facilisis porttitor sit amet vel est. Cras fringilla vulputate justo eget malesuada. Etiam eu nisl ut justo accumsan volutpat.</p>
+                <p>
+                  A flow allows you to invoke a command or change rules at given turn and lane. Most rules in the Setup / Turn sections can be changed here.
+                </p>
                 <br />
 
                 <Form :label-width="100"> 
@@ -611,8 +719,22 @@
       </Collapse>
 
       <Divider dashed/>
+      <strong>Load Your Puzzle</strong>
+      <div style="padding-left: 25px;">
+        <ol>
+          <li>right click artifact in your steam library, click properties, click set launch options, and type in "-dev -console"</li>
+          <li>get {{filename}}.txt from the download location, and place it in "../steam/steamapps/common/artifact/game/dcg/puzzles" (if the folder 'puzzles' doesn't exist, create one)</li>
+          <li>launch artifact, and press the tilde (`) key. It's the key above tab. If the console doesn't pop up, go back to step 1</li>
+          <li>in the console, type "load_puzzle {{filename}}" and press enter</li>
+          <li>press tilde (`) again to close console as game starts</li>
+        </ol>
+      </div>
+      <br />
+      <strong>Test Your Puzzle</strong>
+      <p>You should always test your puzzles before you publish them.</p>
+      <br />
       <div>
-        <Button type="success" @click="downloadPuzzle">Export</Button>
+        <Button type="success" @click="downloadPuzzle">Download</Button>
       </div>
 
     </Card>
@@ -625,6 +747,7 @@ import CardTransfer from "@/components/CardTransfer.vue";
 import CardList from "@/components/CardList.vue";
 import DeckSelection from "@/components/DeckSelection.vue";
 import HeroDeployment from "@/components/HeroDeployment.vue";
+import AdditionalRules from "@/components/AdditionalRules.vue";
 
 // Deck Code Decoder
 import { decodeDeck } from "node-artifact-api";
@@ -651,7 +774,8 @@ export default {
     CardTransfer,
     CardList,
     DeckSelection,
-    HeroDeployment
+    HeroDeployment,
+    AdditionalRules
   },
   methods: {
     addMatch() {
@@ -696,11 +820,13 @@ export default {
     downloadPuzzle() {
       // let template = document.getElementById("vdf-text").value
       let data = exportPuzzle(this.puzzle);
-      //console.log("File", data);
-      download(data.body, data.name + ".txt", "text/plain");
+      download(data.body, this.filename + ".txt", "text/plain");
     }
   },
   computed: {
+    filename: function() {
+      return str(this.puzzle.name).trim().underscored().value();
+    },
     heroes: function() {
       return [];
     },
@@ -748,6 +874,9 @@ export default {
     }
   },
   data() {
+    setTimeout(() => this.addMatch(), 1000);
+    setTimeout(() => this.options.match.active = this.puzzle.matches[0].key, 1500);
+
     return {
       puzzle: {
         name: "Test Puzzle",

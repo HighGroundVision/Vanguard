@@ -7,17 +7,14 @@
         <Menu mode="horizontal" theme="light" active-name="home">
           <MenuItem name="home">
             <RouterLink to="/">
-              Home
+              <h2>
+                [HGV] Artifact Puzzle Builder
+              </h2>
             </RouterLink>
           </MenuItem>
           <MenuItem name="build">
             <RouterLink to="/build">
               Build
-            </RouterLink>
-          </MenuItem>
-          <MenuItem name="about">
-            <RouterLink to="/about">
-              About
             </RouterLink>
           </MenuItem>
         </Menu>

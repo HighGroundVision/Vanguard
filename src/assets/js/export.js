@@ -3,8 +3,6 @@ const str = require("underscore.string");
 const clone = require('clone');
 
 export function exportPuzzle(puzzle) {
-  let name = str(puzzle.name).trim().underscored().value();
-
   let sections = {};
   for (let i = 0; i < puzzle.matches.length; i++) {
     const match = puzzle.matches[i];
@@ -225,6 +223,7 @@ export function exportPuzzle(puzzle) {
     sections[`part${(i+1)}`] = section;``
   }
 
+  let name = str(puzzle.name).trim().underscored().value();
   var now = new Date();
   let data = {};
   data[`${name}`] = {
@@ -235,5 +234,5 @@ export function exportPuzzle(puzzle) {
   };
 
   let vdf = VDF.stringify(data);
-  return {body:vdf, name: name};
+  return vdf;
 }
