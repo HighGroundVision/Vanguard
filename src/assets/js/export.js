@@ -178,26 +178,29 @@ export function exportPuzzle(puzzle) {
       }
       for (let s=0, f=1; s < flow.length; s++,f++) {
         let sequence = {};
-        let events = match.sequence.flows
-          .filter(_ => _.turn == flow[s].turn && _.lane == flow[s].lane)
-          .map(_ => {
-            if(_.mode == "1") {
-              if(_.command == "1") {
-                return "quit";
-              } else if(_.command == "2") {
-                return "concommand dcg_opponent_concede";
-              } else if(_.command == "3") {
-                return `load_section part${_.commands.load_section}`;
-              } else if(_.command == "4") {
-                return `load_puzzle ${_.commands.load_puzzle}`;
-              }
-            } else if(_.mode == "2") {
-              return "<action>";
+        let events = [];
+
+        let collection = match.sequence.flows.filter(_ => _.turn == flow[s].turn && _.lane == flow[s].lane);
+        for (const _ of collection) {
+          if(_.mode == "1") {
+            if(_.command == "1") {
+              events.push("quit");
+              continue;
+            } else if(_.command == "2") {
+              events.push("concommand dcg_opponent_concede");
+              continue;
+            } else if(_.command == "3") {
+              events.push(`load_section part${_.commands.load_section}`);
+              continue;
+            } else if(_.command == "4") {
+              events.push(`load_puzzle ${_.commands.load_puzzle}`);
+              continue;
             }
-            // event.rule
-            // - event.actors
-            // - event.rules
-          });
+          } else if(_.mode == "2") {
+            events.push("<action>");
+            continue;
+          }
+        }
 
         for (let e = 0; e < events.length; e++) {
           const event = events[e];
