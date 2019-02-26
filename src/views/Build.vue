@@ -735,6 +735,7 @@
       <br />
       <div>
         <Button type="success" @click="downloadPuzzle">Download</Button>
+        <Button type="success" @click="copyPuzzle" class="step-right">Copy</Button>
       </div>
 
     </Card>
@@ -818,9 +819,20 @@ export default {
       match.sequence.flows = match.sequence.flows.filter(_ => _.key != key);
     },
     downloadPuzzle() {
-      // let template = document.getElementById("vdf-text").value
       let data = exportPuzzle(this.puzzle);
       download(data, this.filename + ".txt", "text/plain");
+    },
+    copyPuzzle() {
+      let data = exportPuzzle(this.puzzle);
+
+      const el = document.createElement('textarea');
+      el.value = data;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      
+      this.$Notice.success({ title: 'Copied To Clipboard' });
     }
   },
   computed: {
