@@ -41,7 +41,7 @@
             <Button type="error" class="float-right" @click="removeMatch(match.key)">Remove</Button>
             <div slot="content">
               <Steps :current="match.step">
-                <Step title="Decks" content=""></Step>
+                <Step title="Initial" content="Decks"></Step>
                 <Step title="Initial" content="Time" ></Step>
                 <Step title="Initial" content="Deploy Heroes"  ></Step>
                 <Step title="Initial" content="Deploy Creeps" ></Step>
@@ -53,7 +53,7 @@
                 <Step title="Each Turn" content="Extras" ></Step>
                 <Step title="Each Turn" content="Library" ></Step>
                 <Step title="Each Turn" content="Deploy Creeps" ></Step>
-                <Step title="Flow" content="" ></Step>
+                <Step title="Each Turn" content="Flow" ></Step>
               </Steps>
               <br />
 
