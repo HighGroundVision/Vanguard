@@ -1,4 +1,10 @@
-# client
+# Vanguard
+
+A Web tool to create Artifact Puzzles
+
+## Prerequisites
+ - Node v10.15.0
+ - NPM v6.8.0
 
 ## Project setup
 ```
@@ -13,16 +19,6 @@ npm run serve
 ### Compiles and minifies for production
 ```
 npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
 ```
 
 ### Customize configuration
