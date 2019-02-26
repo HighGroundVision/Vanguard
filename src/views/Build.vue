@@ -40,678 +40,690 @@
             {{ getMatchName(skey) }}
             <Button type="error" class="float-right" @click="removeMatch(match.key)">Remove</Button>
             <div slot="content">
- 
-              <h2>Decks</h2>
-              <p>
-                Each side needs a deck. The simplest option is let the player supply the decks for both the player and Ai.
-              </p>
-              <p>
-                When you supply the decks you can supply one or multiple if you want to user to pick from a collection.
-                But some options are only available if you supply a single valid deck, this is because the deck needs to be known to use these options.
-              </p>
+              <Steps :current="match.step">
+                <Step title="Initial" content="Decks"></Step>
+                <Step title="Initial" content="Time" ></Step>
+                <Step title="Initial" content="Deploy Heroes"  ></Step>
+                <Step title="Initial" content="Deploy Creeps" ></Step>
+                <Step title="Initial" content="Towers / Ancients"></Step>
+                <Step title="Initial" content="Library" ></Step>
+                <Step title="Initial" content="Combat" ></Step>
+                <Step title="Initial" content="Shopping" ></Step>
+                <Step title="Each Turn" content="Victory" ></Step>
+                <Step title="Each Turn" content="Extras" ></Step>
+                <Step title="Each Turn" content="Library" ></Step>
+                <Step title="Each Turn" content="Deploy Creeps" ></Step>
+                <Step title="Each Turn" content="Flow" ></Step>
+              </Steps>
               <br />
 
-              <Divider><strong>Player</strong></Divider>
-              <DeckSelection :actor.sync="match.player" />
-              
-              <Divider><strong>Ai</strong></Divider>
-              <DeckSelection :actor.sync="match.ai" />
-              
-              <Divider dashed />
-              <h2>Setup</h2>
-              <p>
-                These are the initial Rules that can be controlled at the begin of the match.
-                Some of these Rules can be changed during the flow of the match.
-                Some sections will list additional rules we are looking to implement.
-                Rules are either general and apply to both sides, or they apply to the player or Ai.
-              </p>
-              <br />
-              <Alert type="info">NOTE: If the default are not inline with a regular match please let use know so we can fixed it.</Alert>
-              <br />
-
-              <h3>Time</h3>
-              <AdditionalRules :rules="['shotclock_only','time_penalty_for_expired_shot_clock']" />
-              <p>
-                These are rules that control the flow of time in the match.
-                If timeout is enabled and what the value of say timeout would be.
-              </p>
-              
-              <Form :label-width="200">
-                <FormItem label="No Timeout">
-                  <i-switch v-model="match.rules.clock.no_shotclock" />
-                </FormItem>
-                <FormItem label="Time Per Turn" v-if="match.rules.clock.no_shotclock === false">
-                  <InputNumber :max="9999" :min="0" v-model="match.rules.clock.shotclock_base_time"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <h3>Deployment - Heroes</h3>
-              <AdditionalRules :rules="['deploy_heroes_enabled', 'this_turn_hero_deployment_order']" />
-              <p>
-                These are rules that control the initial hero deployment, better known as the flop.
-                This includes the number of heroes to flop and which lane the heroes are deployed to.
-              </p>
-
-              <Divider><strong>Player</strong></Divider>
-              <HeroDeployment :actor.sync="match.player" />
-
-              <Divider><strong>Ai</strong></Divider>
-              <HeroDeployment :actor.sync="match.ai" />
-
-              <h3>Deployment - Creeps</h3>
-              <p>
-                These are rules that control the initial creep development.
-                This includes the pathing, spread, list, and amount.
-              </p>
-              <p>
-                The creep amount and counts do not need to match, but the number should be at least equal to the number of creeps in the list so that one of each will spawn. 
-                If you want more of each type then use the increase the count. You can also increase the odds of deployment by adding the same creep multiple times.
-              </p>
-              <br />
-              <Alert type="info">
-                EXAMPLE: Two Meele Creeps and one Centaur Hunter is added to creep list but the count is one. This means that the odds of getting a Meele Creep is 2/3 vs 1/3 for a Centaur Hunter.
-              </Alert>
-              
-              <Divider><strong>General</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Pathing">
-                  <Select v-model="match.rules.deployment.pathing_force">
-                    <Option value="Random" >Random</Option>
-                    <Option value="Left Path" >Left</Option>
-                    <Option value="Right Path" >Right</Option>
-                    <Option value="Forward Path" >Forward</Option>
-                  </Select>
-                </FormItem>
-                <FormItem label="Mode">
-                  <RadioGroup v-model="match.rules.deployment.mode" :vertical="true">
-                    <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
-                    <Radio label="2">The creeps toward lane 1 the first</Radio>
-                    <Radio label="3">The creeps will always land across from heroes first</Radio>
-                  </RadioGroup>
-                </FormItem>
-              </Form>
-
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Creep List">
-                  <CardList 
-                    v-model="match.player.rules.creeps.list"
-                    :cards="creeps"
-                    :tiles="['Creeps', 'Deployment']"
-                  />
-                </FormItem>
-                <FormItem label="Creep Count">
-                  <InputNumber :max="100" :min="0" v-model="match.player.rules.creeps.count"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Creep List">
-                  <CardList 
-                    v-model="match.ai.rules.creeps.list"
-                    :cards="creeps"
-                    :tiles="['Creeps', 'Deployment']"
-                  />
-                </FormItem>
-                <FormItem label="Creep Count">
-                  <InputNumber :max="100" :min="0" v-model="match.ai.rules.creeps.count"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <h3>Towers / Ancients</h3>
-              <AdditionalRules :rules="['tower_armor', 'tower_current_mana', 'tower_attribute']" />
-              <p>
-                These are rules that control the structures setup.
-                This includes the initial mana, tower health in each lane, and ancient health in each lane.
-              </p>
-              
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="">
-                  <Row>
-                    <i-col span="8">
-                      <h4>Lane 1</h4>
-                    </i-col>
-                    <i-col span="8">
-                      <h4>Lane 2</h4>
-                    </i-col>
-                    <i-col span="8">
-                      <h4>Lane 3</h4>
-                    </i-col>
-                  </Row>
-                </FormItem>
-                <FormItem label="Mana">
-                  <Row>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
-                    </i-col>
-                  </Row>
-                </FormItem>
-                <FormItem label="Tower Health">
-                  <Row>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_1"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_2"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_3"></InputNumber>
-                    </i-col>
-                  </Row>
-                </FormItem>
-                <FormItem label="Ancient Health">
-                  <Row>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_1"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_2"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_3"></InputNumber>
-                    </i-col>
-                  </Row>
-                </FormItem>
-              </Form>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="">
-                  <Row>
-                    <i-col span="8">
-                      <h4>Lane 1</h4>
-                    </i-col>
-                    <i-col span="8">
-                      <h4>Lane 2</h4>
-                    </i-col>
-                    <i-col span="8">
-                      <h4>Lane 3</h4>
-                    </i-col>
-                  </Row>
-                </FormItem>
-                <FormItem label="Mana">
-                  <Row>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
-                    </i-col>
-                  </Row>
-                </FormItem>
-                <FormItem label="Tower Health">
-                  <Row>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_1"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_2"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_3"></InputNumber>
-                    </i-col>
-                  </Row>
-                </FormItem>
-                <FormItem label="Ancient Health">
-                  <Row>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_1"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_2"></InputNumber>
-                    </i-col>
-                    <i-col span="8">
-                      <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_3"></InputNumber>
-                    </i-col>
-                  </Row>
-                </FormItem>
-              </Form>
- 
-              <h3>Library</h3>
-              <AdditionalRules :rules="['card_draw_initial', 'can_have_duplicates', 'can_have_signatures']" />
-              <p>
-                These are rules that control the library. This is different then your deck, as these are just the cards you draw.
-                This includes the initial library order and draw amount.
-              </p>
-              <br />
-              <Alert type="info">
-                NOTE: The library order is only available if you have set a single deck.
-              </Alert>
-  
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200"> 
-                <FormItem label="Draw Order" v-if="match.player.decks.length === 1">
-                  <CardTransfer 
-                    v-model="match.player.rules.library.order"
-                    :cards="match.player.decks[0].cards.library"
-                    :tiles="['Library', 'Draw']"
-                  />
-                </FormItem>
-                <FormItem label="# of Cards To Draw">
-                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.library.draw"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Draw Order" v-if="match.ai.decks.length === 1">
-                  <CardTransfer 
-                    v-model="match.ai.rules.library.order"
-                    :cards="match.ai.decks[0].cards.library"
-                    :tiles="['Library', 'Draw']"
-                  />
-                </FormItem>
-                <FormItem label="# of Cards To Draw">
-                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.library.draw"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <h3>Combat</h3>
-              <AdditionalRules :rules="['pass_to_combat', 'ai_lookahead_limit', 'scale_ai_difficulty']" />
-              <p>
-                These are rules that control the Ai's combat.
-                This includes the pass change and play in draw order options.
-              </p>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Pass Chance Multiplier">
-                  <Slider v-model="match.rules.combat.ai_pass_chance_multiplier" show-input></Slider>
-                </FormItem>
-                <FormItem label="Play In Draw Order">
-                  <i-switch v-model="match.rules.combat.ai_action_choice_non_random" />
-                </FormItem>
-              </Form>
-
-              <h3>Shopping</h3>
-              <p>
-                These are rules that control the shopping phase.
-                This includes if the shop is enabled the store order and forcing the secret shop item.
-              </p>
-              <br />
-              <Alert type="info">
-                NOTE: The shop order is only available if you have set a single deck.
-              </Alert>
-              <br />
-
-              <Divider><strong>General</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Store Enabled">
-                  <i-switch v-model="match.rules.store.enabled" />
-                </FormItem>
-              </Form>
-              
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Secret Shop">
-                  <Select v-model="match.rules.store.secret">
-                    <Option :value="0" >Random</Option>
-                    <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
-                  </Select>
-                </FormItem>
-                <FormItem label="Shop Order" v-if="match.player.decks.length === 1">
-                  <CardTransfer 
-                    v-model="match.player.rules.store.order"
-                    :cards="match.player.decks[0].cards.items"
-                    :tiles="['Store', 'Order']" 
-                  />
-                </FormItem>  
-              </Form>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Shop Order" v-if="match.ai.decks.length === 1">
-                  <CardTransfer 
-                    v-model="match.ai.rules.store.order"
-                    :cards="match.ai.decks[0].cards.items"
-                    :tiles="['Store', 'Order']" 
-                  />
-                </FormItem>
-              </Form>
-
-              <h3>Victory</h3>
-              <p>
-                These are rules that add more victory conditions
-                This includes gold, units, and kills.
-              </p>
-              <p>
-                These just add another victory condition, the match will end when normal conditions are satisfied even if these options are enabled. 
-              </p>
-              <br />
-
-              <Form :label-width="200">
-                <FormItem label="Gold">
-                  <i-switch v-model="match.rules.victory.gold_flag" />
-                  <InputNumber :max="9999" :min="0" v-model="match.rules.victory.gold_amount" v-if="match.rules.victory.gold_flag" class="step-right"></InputNumber>
-                </FormItem>
-                <FormItem label="Units">
-                  <i-switch v-model="match.rules.victory.units_flag" />
-                  <InputNumber :max="9999" :min="0" v-model="match.rules.victory.units_amount" v-if="match.rules.victory.units_flag" class="step-right"></InputNumber>
-                </FormItem>
-                <FormItem label="Kills">
-                  <i-switch v-model="match.rules.victory.kills_flag" />
-                  <InputNumber :max="9999" :min="0" v-model="match.rules.victory.kills_amount" v-if="match.rules.victory.kills_flag" class="step-right"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <Divider dashed />
-              <h2>Each Turn</h2>
-              <p>
-                Although you can update most rules each turn using flows. 
-                Sometimes it is just simpler to set the value and let the engine do the work. 
-                Each of these rules run each turn.
-              </p>
-              <br />
-              
-              <h3>Extras</h3>
-              <p>
-                These are rules that add bonuses to each side ever turn.
-                This includes gold and mana.
-              </p>
-              
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Mana Boost">
-                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.mana"></InputNumber>
-                </FormItem>
-                <FormItem label="Gold Boost">
-                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.gold"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="Mana Boost">
-                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.mana"></InputNumber>
-                </FormItem>
-                <FormItem label="Gold Boost">
-                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.gold"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <h3>Cards</h3>
-              <p>
-                These are rules that control the cards drawn each turn.
-                This includes the amount of cards to draw and any additional cards.
-              </p>
-              <br />
-              <Alert type="info">
-                NOTE: These additional cards are not drawn from the deck but are created on fly.
-              </Alert>
-
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="# of Cards To Draw">
-                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.draw"></InputNumber>
-                </FormItem>
-                <FormItem label="Extra Cards">
-                  <CardList 
-                    v-model="match.player.rules.turn.free"
-                    :cards="draw"
-                    :tiles="['Cards', 'Extra']" 
-                  />
-                </FormItem>
-              </Form>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="# of Cards To Draw">
-                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.draw"></InputNumber>
-                </FormItem>
-                <FormItem label="Extra Cards">
-                  <CardList 
-                    v-model="match.ai.rules.turn.free"
-                    :cards="draw"
-                    :tiles="['Cards', 'Extra']" 
-                  />
-                </FormItem>
-              </Form>
-
-              <h3>Creeps</h3>
-              <p>
-                These are rules that control how creeps are deployed each turn.
-                This includes the amount of creeps from the creep list. 
-                This is so that initial can be different then each turn.
-              </p>
-              <br />
-              <Alert type="info">
-                NOTE: You can use the flow to change the creep list and amount each turn.
-              </Alert>
-
-              <Divider><strong>Player</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="# of Creeps to Deploy">
-                  <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.creeps"></InputNumber>
-                </FormItem>
-              </Form>
-
-              <Divider><strong>Ai</strong></Divider>
-              <Form :label-width="200">
-                <FormItem label="# of Creeps to Deploy">
-                  <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.creeps"></InputNumber>
-                </FormItem>
-              </Form>
-              
-
-              <Divider dashed />
-              <h2>Flow</h2>
-              <p>
-                The flow of the match is not something you can control only react to. 
-                To this end we have hidden a lot of mess of track turns and lanes. 
-                So you can just state what you wish to change when and the system will handle building the correct sequence so that event will be triggered in correct turn and lane.
-              </p>
-              <br />
-              <Alert type="info">
-                NOTE: Shopping and Deployment happen between lane 3 and and lane 1 of next turn. 
-                So if you want to change the shop or deployment options you should do it on lane 3 so they are active before the shopping and deployment.
-                <br />
-                Like wise if you want to the player to auto quit at the end of 3 turn then the player quit command should be on turn 4 lane 1.
-              </Alert>
-              <br />
-
-              <div>
-                <Button type="primary" @click="match.sequence.show = true">Add Flow</Button>
+              <div style="text-align: center;">
+                <Button type="info" @click="previousStep(match)">Previous</Button>
+                <Button type="info" @click="nextStep(match)" class="step-right">Next</Button>
               </div>
               <Divider dashed/>
-
-              <Modal
-                v-model="match.sequence.show"
-                :footer-hide="true"
-                title="Sequence Flow"
-                width="1000">
-                
+              
+              <div v-if="match.step == 0">
                 <p>
-                  A flow allows you to invoke a command or change rules at given turn and lane. Most rules in the Setup / Turn sections can be changed here.
+                  Each side needs a deck. The simplest option is let the player supply the decks for both the player and Ai.
+                </p>
+                <p>
+                  When you supply the decks you can supply one or multiple if you want to user to pick from a collection.
+                  But some options are only available if you supply a single valid deck, this is because the deck needs to be known to use these options.
                 </p>
                 <br />
 
-                <Form :label-width="100"> 
-                  <FormItem label="Turn">
-                    <InputNumber :max="9999" :min="1" v-model="match.sequence.flow.turn"></InputNumber>
+                <Divider><strong>Player</strong></Divider>
+                <DeckSelection :actor.sync="match.player" />
+                
+                <Divider><strong>Ai</strong></Divider>
+                <DeckSelection :actor.sync="match.ai" />
+              </div>
+
+              <div v-if="match.step == 1">
+                <!--<AdditionalRules :rules="['shotclock_only','time_penalty_for_expired_shot_clock']" />-->
+                <p>
+                  These are rules that control the flow of time in the match.
+                  If timeout is enabled and what the value of say timeout would be.
+                </p>
+                
+                <Form :label-width="200">
+                  <FormItem label="No Timeout">
+                    <i-switch v-model="match.rules.clock.no_shotclock" />
                   </FormItem>
-                  <FormItem label="Lane">
-                    <Slider :max="3" :min="1" v-model="match.sequence.flow.lane" show-input></Slider>
-                  </FormItem>
-                  <FormItem label="Mode">
-                    <RadioGroup v-model="match.sequence.flow.mode" :vertical="true">
-                      <Radio label="1">Invoke Command</Radio>
-                      <Radio label="2">Change Rules</Radio>
-                    </RadioGroup>
-                  </FormItem>
-                  <div v-if="match.sequence.flow.mode === '1'">
-                    <FormItem label="Command">
-                      <RadioGroup v-model="match.sequence.flow.command" :vertical="true">
-                        <Radio label="1">Player Quits</Radio>
-                        <Radio label="2">Ai Concedes</Radio>
-                        <Radio label="3">Load Match</Radio>
-                        <Radio label="4">Load Puzzle</Radio>
-                      </RadioGroup>
-                    </FormItem>
-                    <FormItem label="Load Match" v-if="match.sequence.flow.command === '3'">
-                      <Select v-model="match.sequence.flow.commands.load_section">
-                        <Option v-for="(item, sKey) in puzzle.matches" :value="sKey" :key="item.key">{{ getMatchName(skey) }}</Option>
-                      </Select>
-                    </FormItem>
-                    <FormItem label="Load Puzzle" v-if="match.sequence.flow.command === '4'">
-                      <Input v-model="match.sequence.flow.commands.load_puzzle" placeholder="" />
-                    </FormItem>
-                  </div>
-                  <div v-if="match.sequence.flow.mode === '2'">
-                    <FormItem label="Rule">
-                      <RadioGroup v-model="match.sequence.flow.rule" :vertical="true">
-                        <Radio label="1">Clock</Radio>
-                        <Radio label="2">Store</Radio>
-                        <Radio label="3">Combat</Radio>
-                        <Radio label="4">Victory</Radio>
-                        <Radio label="5">Library</Radio>
-                        <Radio label="6">Creeps</Radio>
-                      </RadioGroup>
-                    </FormItem>
-                    <div v-if="match.sequence.flow.rule === '1'">
-                      <Divider><strong>General</strong></Divider>
-                      <FormItem label="No Timeout">
-                        <i-switch v-model="match.sequence.flow.rules.clock.no_shotclock" />
-                      </FormItem>
-                      <FormItem label="Time Per Turn" v-if="match.sequence.flow.rules.clock.no_shotclock === false">
-                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.clock.shotclock_base_time"></InputNumber>
-                      </FormItem>
-                    </div>
-                    <div v-if="match.sequence.flow.rule === '2'">
-                      <Divider><strong>General</strong></Divider>
-                      <FormItem label="Store Enabled">
-                        <i-switch v-model="match.sequence.flow.rules.store.enabled" />
-                      </FormItem>
-                      <Divider><strong>Player</strong></Divider>
-                      <FormItem label="Secret Shop">
-                        <Select v-model="match.sequence.flow.rules.store.secret">
-                          <Option :value="0" >Random</Option>
-                          <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
-                        </Select>
-                      </FormItem>
-                    </div>
-                    <div v-if="match.sequence.flow.rule === '3'">
-                      <Divider><strong>Ai</strong></Divider>
-                      <FormItem label="Pass Chance Multiplier">
-                        <Slider v-model="match.sequence.flow.rules.combat.ai_pass_chance_multiplier" show-input></Slider>
-                      </FormItem>
-                    </div>
-                    <div v-if="match.sequence.flow.rule === '4'">
-                      <Divider><strong>General</strong></Divider>
-                      <FormItem label="Gold">
-                        <i-switch v-model="match.sequence.flow.rules.victory.gold_flag" />
-                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.gold_amount" v-if="match.sequence.flow.rules.victory.gold_flag" class="step-right"></InputNumber>
-                      </FormItem>
-                      <FormItem label="Units">
-                        <i-switch v-model="match.sequence.flow.rules.victory.units_flag" />
-                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.units_amount" v-if="match.sequence.flow.rules.victory.units_flag" class="step-right"></InputNumber>
-                      </FormItem>
-                      <FormItem label="Kills">
-                        <i-switch v-model="match.sequence.flow.rules.victory.kills_flag" />
-                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.kills_amount" v-if="match.sequence.flow.rules.victory.kills_flag" class="step-right"></InputNumber>
-                      </FormItem>
-                    </div>
-                    <div v-if="match.sequence.flow.rule === '5'">
-                      <Divider><strong>Player</strong></Divider>
-                      <FormItem label="Cards to Draw">
-                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.actors.player.library.draw"></InputNumber>
-                      </FormItem>
-                      <FormItem label="Extra Cards">
-                        <CardList 
-                          v-model="match.sequence.flow.actors.player.library.free"
-                          :cards="draw"
-                          :tiles="['Cards', 'Extra']" 
-                        />
-                      </FormItem>
-                      <Divider><strong>Ai</strong></Divider>
-                      <FormItem label="Cards to Draw">
-                        <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.actors.ai.library.draw"></InputNumber>
-                      </FormItem>
-                      <FormItem label="Extra Cards">
-                        <CardList 
-                          v-model="match.sequence.flow.actors.ai.library.free"
-                          :cards="draw"
-                          :tiles="['Cards', 'Extra']" 
-                        />
-                      </FormItem>
-                    </div>
-                    <div v-if="match.sequence.flow.rule === '6'">
-                      <Divider><strong>General</strong></Divider>
-                      <FormItem label="Pathing">
-                        <Select v-model="match.sequence.flow.rules.deployment.pathing_force">
-                          <Option value="Random">Random</Option>
-                          <Option value="Left Path" >Left</Option>
-                          <Option value="Right Path" >Right</Option>
-                          <Option value="Forward Path" >Forward</Option>
-                        </Select>
-                      </FormItem>
-                      <Divider><strong>Player</strong></Divider>
-                      <FormItem label="Creep List">
-                        <CardList 
-                          v-model="match.sequence.flow.actors.player.creeps.list"
-                          :cards="creeps"
-                          :tiles="['Creeps', 'Deployment']"
-                        />
-                      </FormItem>
-                      <FormItem label="Creep Count">
-                        <InputNumber :max="100" :min="0" v-model="match.sequence.flow.actors.player.creeps.count"></InputNumber>
-                      </FormItem>
-                      <Divider><strong>Ai</strong></Divider>
-                      <FormItem label="Creep List">
-                        <CardList 
-                          v-model="match.sequence.flow.actors.ai.creeps.list"
-                          :cards="creeps"
-                          :tiles="['Creeps', 'Deployment']"
-                        />
-                      </FormItem>
-                      <FormItem label="Creep Count">
-                        <InputNumber :max="100" :min="0" v-model="match.sequence.flow.actors.ai.creeps.count"></InputNumber>
-                      </FormItem>
-                    </div>
-                  </div>
-                  <FormItem label="">
-                    <Button type="success" @click="addFlow(match)" v-if="match.sequence.flow.key === 0">Add Flow</Button>
-                    <Button type="success" @click="addFlow(match)" v-if="match.sequence.flow.key != 0">Edit Flow</Button>
-                    <Button type="info" @click="match.sequence.show = false" class="step-right">Cancel</Button>
+                  <FormItem label="Time Per Turn" v-if="match.rules.clock.no_shotclock === false">
+                    <InputNumber :max="9999" :min="0" v-model="match.rules.clock.shotclock_base_time"></InputNumber>
                   </FormItem>
                 </Form>
-              </Modal>
+              </div>
 
-              <Row>
-                <template v-for="flow in match.sequence.flows">
-                  <i-col :key="flow.key" span="8" style="padding: 5px;">
-                    <Card>
-                      <p slot="title">Turn {{flow.turn}} - Lane {{flow.lane}}</p>
-                      <Button slot="extra" type="info" @click="editFlow(match, flow.key)">Edit</Button>
-                      <Button slot="extra" type="error" @click="removeFlow(match, flow.key)" class="step-right">Remove</Button>
-                      <CellGroup>
-                        <Cell v-if="flow.mode == '1'" title="Mode" extra="Invoke Command" />
-                        <Cell v-if="flow.mode == '2'" title="Mode" extra="Change Rules" />
-                        <Cell v-if="flow.mode == '1' && flow.command == '1'" title="Command" extra="Player Quits" />
-                        <Cell v-if="flow.mode == '1' && flow.command == '2'" title="Command" extra="Ai Concedes" />
-                        <Cell v-if="flow.mode == '1' && flow.command == '3'" title="Command" extra="Load Match" />
-                        <Cell v-if="flow.mode == '1' && flow.command == '4'" title="Command" extra="Load Puzzle" />
-                        <Cell v-if="flow.mode == '2' && flow.rule == '1'" title="Rule" extra="Clock" />
-                        <Cell v-if="flow.mode == '2' && flow.rule == '2'" title="Rule" extra="Store" />
-                        <Cell v-if="flow.mode == '2' && flow.rule == '3'" title="Rule" extra="Combat" />
-                        <Cell v-if="flow.mode == '2' && flow.rule == '4'" title="Rule" extra="Victory" />
-                        <Cell v-if="flow.mode == '2' && flow.rule == '5'" title="Rule" extra="Library" />
-                        <Cell v-if="flow.mode == '2' && flow.rule == '6'" title="Rule" extra="Creeps" />
-                      </CellGroup>
-                    </Card>
-                  </i-col>
-                </template>
-              </Row>
+              <div v-if="match.step == 2">
+                <!--<AdditionalRules :rules="['deploy_heroes_enabled', 'this_turn_hero_deployment_order']" />-->
+                <p>
+                  These are rules that control the initial hero deployment, better known as the flop.
+                  This includes the number of heroes to flop and which lane the heroes are deployed to.
+                </p>
+
+                <Divider><strong>Player</strong></Divider>
+                <HeroDeployment :actor.sync="match.player" />
+
+                <Divider><strong>Ai</strong></Divider>
+                <HeroDeployment :actor.sync="match.ai" />
+              </div>
+
+              <div v-if="match.step == 3">
+                <p>
+                  These are rules that control the initial creep development.
+                  This includes the pathing, spread, list, and amount.
+                </p>
+                <p>
+                  The creep amount and counts do not need to match, but the number should be at least equal to the number of creeps in the list so that one of each will spawn. 
+                  If you want more of each type then use the increase the count. You can also increase the odds of deployment by adding the same creep multiple times.
+                </p>
+                <br />
+                <Alert type="info">
+                  EXAMPLE: Two Meele Creeps and one Centaur Hunter is added to creep list but the count is one. This means that the odds of getting a Meele Creep is 2/3 vs 1/3 for a Centaur Hunter.
+                </Alert>
+                
+                <Divider><strong>General</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Pathing">
+                    <Select v-model="match.rules.deployment.pathing_force">
+                      <Option value="Random" >Random</Option>
+                      <Option value="Left Path" >Left</Option>
+                      <Option value="Right Path" >Right</Option>
+                      <Option value="Forward Path" >Forward</Option>
+                    </Select>
+                  </FormItem>
+                  <FormItem label="Mode">
+                    <RadioGroup v-model="match.rules.deployment.mode" :vertical="true">
+                      <Radio label="1">Spreads the creeps evenly to all lanes</Radio>
+                      <Radio label="2">The creeps toward lane 1 the first</Radio>
+                      <Radio label="3">The creeps will always land across from heroes first</Radio>
+                    </RadioGroup>
+                  </FormItem>
+                </Form>
+
+                <Divider><strong>Player</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Creep List">
+                    <CardList 
+                      v-model="match.player.rules.creeps.list"
+                      :cards="creeps"
+                      :tiles="['Creeps', 'Deployment']"
+                    />
+                  </FormItem>
+                  <FormItem label="Creep Count">
+                    <InputNumber :max="100" :min="0" v-model="match.player.rules.creeps.count"></InputNumber>
+                  </FormItem>
+                </Form>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Creep List">
+                    <CardList 
+                      v-model="match.ai.rules.creeps.list"
+                      :cards="creeps"
+                      :tiles="['Creeps', 'Deployment']"
+                    />
+                  </FormItem>
+                  <FormItem label="Creep Count">
+                    <InputNumber :max="100" :min="0" v-model="match.ai.rules.creeps.count"></InputNumber>
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 4">
+                <!--<AdditionalRules :rules="['tower_armor', 'tower_current_mana', 'tower_attribute']" />-->
+                <p>
+                  These are rules that control the structures setup.
+                  This includes the initial mana, tower health in each lane, and ancient health in each lane.
+                </p>
+                
+                <Divider><strong>Player</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="">
+                    <Row>
+                      <i-col span="8">
+                        <h4>Lane 1</h4>
+                      </i-col>
+                      <i-col span="8">
+                        <h4>Lane 2</h4>
+                      </i-col>
+                      <i-col span="8">
+                        <h4>Lane 3</h4>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="Mana">
+                    <Row>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.mana"></InputNumber>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="Tower Health">
+                    <Row>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_1"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_2"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.towers.lane_3"></InputNumber>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="Ancient Health">
+                    <Row>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_1"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_2"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.player.rules.ancient.lane_3"></InputNumber>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                </Form>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="">
+                    <Row>
+                      <i-col span="8">
+                        <h4>Lane 1</h4>
+                      </i-col>
+                      <i-col span="8">
+                        <h4>Lane 2</h4>
+                      </i-col>
+                      <i-col span="8">
+                        <h4>Lane 3</h4>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="Mana">
+                    <Row>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.mana"></InputNumber>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="Tower Health">
+                    <Row>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_1"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_2"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.towers.lane_3"></InputNumber>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                  <FormItem label="Ancient Health">
+                    <Row>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_1"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_2"></InputNumber>
+                      </i-col>
+                      <i-col span="8">
+                        <InputNumber :max="99" :min="0" v-model="match.ai.rules.ancient.lane_3"></InputNumber>
+                      </i-col>
+                    </Row>
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 5">
+                <!--<AdditionalRules :rules="['card_draw_initial', 'can_have_duplicates', 'can_have_signatures']" />-->
+                <p>
+                  These are rules that control the library. This is different then your deck, as these are just the cards you draw.
+                  This includes the initial library order and draw amount.
+                </p>
+                <br />
+                <Alert type="info">
+                  NOTE: The library order is only available if you have set a single deck.
+                </Alert>
+    
+                <Divider><strong>Player</strong></Divider>
+                <Form :label-width="200"> 
+                  <FormItem label="Draw Order" v-if="match.player.decks.length === 1">
+                    <CardTransfer 
+                      v-model="match.player.rules.library.order"
+                      :cards="match.player.decks[0].cards.library"
+                      :tiles="['Library', 'Draw']"
+                    />
+                  </FormItem>
+                  <FormItem label="# of Cards To Draw">
+                    <InputNumber :max="9999" :min="0" v-model="match.player.rules.library.draw"></InputNumber>
+                  </FormItem>
+                </Form>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Draw Order" v-if="match.ai.decks.length === 1">
+                    <CardTransfer 
+                      v-model="match.ai.rules.library.order"
+                      :cards="match.ai.decks[0].cards.library"
+                      :tiles="['Library', 'Draw']"
+                    />
+                  </FormItem>
+                  <FormItem label="# of Cards To Draw">
+                    <InputNumber :max="9999" :min="0" v-model="match.ai.rules.library.draw"></InputNumber>
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 6">
+                <!--<AdditionalRules :rules="['pass_to_combat', 'ai_lookahead_limit', 'scale_ai_difficulty']" />-->
+                <p>
+                  These are rules that control the Ai's combat.
+                  This includes the pass change and play in draw order options.
+                </p>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Pass Chance Multiplier">
+                    <Slider v-model="match.rules.combat.ai_pass_chance_multiplier" show-input></Slider>
+                  </FormItem>
+                  <FormItem label="Play In Draw Order">
+                    <i-switch v-model="match.rules.combat.ai_action_choice_non_random" />
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 7">
+                <p>
+                  These are rules that control the shopping phase.
+                  This includes if the shop is enabled the store order and forcing the secret shop item.
+                </p>
+                <br />
+                <Alert type="info">
+                  NOTE: The shop order is only available if you have set a single deck.
+                </Alert>
+                <br />
+
+                <Divider><strong>General</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Store Enabled">
+                    <i-switch v-model="match.rules.store.enabled" />
+                  </FormItem>
+                </Form>
+                
+                <Divider><strong>Player</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Secret Shop">
+                    <Select v-model="match.rules.store.secret">
+                      <Option :value="0" >Random</Option>
+                      <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
+                    </Select>
+                  </FormItem>
+                  <FormItem label="Shop Order" v-if="match.player.decks.length === 1">
+                    <CardTransfer 
+                      v-model="match.player.rules.store.order"
+                      :cards="match.player.decks[0].cards.items"
+                      :tiles="['Store', 'Order']" 
+                    />
+                  </FormItem>  
+                </Form>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Shop Order" v-if="match.ai.decks.length === 1">
+                    <CardTransfer 
+                      v-model="match.ai.rules.store.order"
+                      :cards="match.ai.decks[0].cards.items"
+                      :tiles="['Store', 'Order']" 
+                    />
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 8">
+                <p>
+                  These are rules that add more victory conditions
+                  This includes gold, units, and kills.
+                </p>
+                <p>
+                  These just add another victory condition, the match will end when normal conditions are satisfied even if these options are enabled. 
+                </p>
+                <br />
+
+                <Form :label-width="200">
+                  <FormItem label="Gold">
+                    <i-switch v-model="match.rules.victory.gold_flag" />
+                    <InputNumber :max="9999" :min="0" v-model="match.rules.victory.gold_amount" v-if="match.rules.victory.gold_flag" class="step-right"></InputNumber>
+                  </FormItem>
+                  <FormItem label="Units">
+                    <i-switch v-model="match.rules.victory.units_flag" />
+                    <InputNumber :max="9999" :min="0" v-model="match.rules.victory.units_amount" v-if="match.rules.victory.units_flag" class="step-right"></InputNumber>
+                  </FormItem>
+                  <FormItem label="Kills">
+                    <i-switch v-model="match.rules.victory.kills_flag" />
+                    <InputNumber :max="9999" :min="0" v-model="match.rules.victory.kills_amount" v-if="match.rules.victory.kills_flag" class="step-right"></InputNumber>
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 9">
+                <p>
+                  These are rules that add bonuses to each side ever turn.
+                  This includes gold and mana.
+                </p>
+                
+                <Divider><strong>Player</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Mana Boost">
+                    <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.mana"></InputNumber>
+                  </FormItem>
+                  <FormItem label="Gold Boost">
+                    <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.gold"></InputNumber>
+                  </FormItem>
+                </Form>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="Mana Boost">
+                    <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.mana"></InputNumber>
+                  </FormItem>
+                  <FormItem label="Gold Boost">
+                    <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.gold"></InputNumber>
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 10">
+                <p>
+                  These are rules that control the cards drawn each turn.
+                  This includes the amount of cards to draw and any additional cards.
+                </p>
+                <br />
+                <Alert type="info">
+                  NOTE: These additional cards are not drawn from the deck but are created on fly.
+                </Alert>
+
+                <Divider><strong>Player</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="# of Cards To Draw">
+                    <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.draw"></InputNumber>
+                  </FormItem>
+                  <FormItem label="Extra Cards">
+                    <CardList 
+                      v-model="match.player.rules.turn.free"
+                      :cards="draw"
+                      :tiles="['Cards', 'Extra']" 
+                    />
+                  </FormItem>
+                </Form>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="# of Cards To Draw">
+                    <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.draw"></InputNumber>
+                  </FormItem>
+                  <FormItem label="Extra Cards">
+                    <CardList 
+                      v-model="match.ai.rules.turn.free"
+                      :cards="draw"
+                      :tiles="['Cards', 'Extra']" 
+                    />
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 11">
+                <p>
+                  These are rules that control how creeps are deployed each turn.
+                  This includes the amount of creeps from the creep list. 
+                  This is so that initial can be different then each turn.
+                </p>
+                <br />
+                <Alert type="info">
+                  NOTE: You can use the flow to change the creep list and amount each turn.
+                </Alert>
+
+                <Divider><strong>Player</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="# of Creeps to Deploy">
+                    <InputNumber :max="9999" :min="0" v-model="match.player.rules.turn.creeps"></InputNumber>
+                  </FormItem>
+                </Form>
+
+                <Divider><strong>Ai</strong></Divider>
+                <Form :label-width="200">
+                  <FormItem label="# of Creeps to Deploy">
+                    <InputNumber :max="9999" :min="0" v-model="match.ai.rules.turn.creeps"></InputNumber>
+                  </FormItem>
+                </Form>
+              </div>
+
+              <div v-if="match.step == 12">
+                <p>
+                  The flow of the match is not something you can control only react to. 
+                  To this end we have hidden a lot of mess of track turns and lanes. 
+                  So you can just state what you wish to change when and the system will handle building the correct sequence so that event will be triggered in correct turn and lane.
+                </p>
+                <br />
+                <Alert type="info">
+                  NOTE: Shopping and Deployment happen between lane 3 and and lane 1 of next turn. 
+                  So if you want to change the shop or deployment options you should do it on lane 3 so they are active before the shopping and deployment.
+                  <br />
+                  Like wise if you want to the player to auto quit at the end of 3 turn then the player quit command should be on turn 4 lane 1.
+                </Alert>
+                <br />
+
+                <div>
+                  <Button type="primary" @click="match.sequence.show = true">Add Flow</Button>
+                </div>
+                <Divider dashed/>
+
+                <Modal
+                  v-model="match.sequence.show"
+                  :footer-hide="true"
+                  title="Sequence Flow"
+                  width="1000">
+                  
+                  <p>
+                    A flow allows you to invoke a command or change rules at given turn and lane. Most rules in the Setup / Turn sections can be changed here.
+                  </p>
+                  <br />
+
+                  <Form :label-width="100"> 
+                    <FormItem label="Turn">
+                      <InputNumber :max="9999" :min="1" v-model="match.sequence.flow.turn"></InputNumber>
+                    </FormItem>
+                    <FormItem label="Lane">
+                      <Slider :max="3" :min="1" v-model="match.sequence.flow.lane" show-input></Slider>
+                    </FormItem>
+                    <FormItem label="Mode">
+                      <RadioGroup v-model="match.sequence.flow.mode" :vertical="true">
+                        <Radio label="1">Invoke Command</Radio>
+                        <Radio label="2">Change Rules</Radio>
+                      </RadioGroup>
+                    </FormItem>
+                    <div v-if="match.sequence.flow.mode === '1'">
+                      <FormItem label="Command">
+                        <RadioGroup v-model="match.sequence.flow.command" :vertical="true">
+                          <Radio label="1">Player Quits</Radio>
+                          <Radio label="2">Ai Concedes</Radio>
+                          <Radio label="3">Load Match</Radio>
+                          <Radio label="4">Load Puzzle</Radio>
+                        </RadioGroup>
+                      </FormItem>
+                      <FormItem label="Load Match" v-if="match.sequence.flow.command === '3'">
+                        <Select v-model="match.sequence.flow.commands.load_section">
+                          <Option v-for="(item, sKey) in puzzle.matches" :value="sKey" :key="item.key">{{ getMatchName(skey) }}</Option>
+                        </Select>
+                      </FormItem>
+                      <FormItem label="Load Puzzle" v-if="match.sequence.flow.command === '4'">
+                        <Input v-model="match.sequence.flow.commands.load_puzzle" placeholder="" />
+                      </FormItem>
+                    </div>
+                    <div v-if="match.sequence.flow.mode === '2'">
+                      <FormItem label="Rule">
+                        <RadioGroup v-model="match.sequence.flow.rule" :vertical="true">
+                          <Radio label="1">Clock</Radio>
+                          <Radio label="2">Store</Radio>
+                          <Radio label="3">Combat</Radio>
+                          <Radio label="4">Victory</Radio>
+                          <Radio label="5">Library</Radio>
+                          <Radio label="6">Creeps</Radio>
+                        </RadioGroup>
+                      </FormItem>
+                      <div v-if="match.sequence.flow.rule === '1'">
+                        <Divider><strong>General</strong></Divider>
+                        <FormItem label="No Timeout">
+                          <i-switch v-model="match.sequence.flow.rules.clock.no_shotclock" />
+                        </FormItem>
+                        <FormItem label="Time Per Turn" v-if="match.sequence.flow.rules.clock.no_shotclock === false">
+                          <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.clock.shotclock_base_time"></InputNumber>
+                        </FormItem>
+                      </div>
+                      <div v-if="match.sequence.flow.rule === '2'">
+                        <Divider><strong>General</strong></Divider>
+                        <FormItem label="Store Enabled">
+                          <i-switch v-model="match.sequence.flow.rules.store.enabled" />
+                        </FormItem>
+                        <Divider><strong>Player</strong></Divider>
+                        <FormItem label="Secret Shop">
+                          <Select v-model="match.sequence.flow.rules.store.secret">
+                            <Option :value="0" >Random</Option>
+                            <Option v-for="(item) in items" :value="item.id" :key="item.key">{{ item.label }}</Option>
+                          </Select>
+                        </FormItem>
+                      </div>
+                      <div v-if="match.sequence.flow.rule === '3'">
+                        <Divider><strong>Ai</strong></Divider>
+                        <FormItem label="Pass Chance Multiplier">
+                          <Slider v-model="match.sequence.flow.rules.combat.ai_pass_chance_multiplier" show-input></Slider>
+                        </FormItem>
+                      </div>
+                      <div v-if="match.sequence.flow.rule === '4'">
+                        <Divider><strong>General</strong></Divider>
+                        <FormItem label="Gold">
+                          <i-switch v-model="match.sequence.flow.rules.victory.gold_flag" />
+                          <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.gold_amount" v-if="match.sequence.flow.rules.victory.gold_flag" class="step-right"></InputNumber>
+                        </FormItem>
+                        <FormItem label="Units">
+                          <i-switch v-model="match.sequence.flow.rules.victory.units_flag" />
+                          <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.units_amount" v-if="match.sequence.flow.rules.victory.units_flag" class="step-right"></InputNumber>
+                        </FormItem>
+                        <FormItem label="Kills">
+                          <i-switch v-model="match.sequence.flow.rules.victory.kills_flag" />
+                          <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.rules.victory.kills_amount" v-if="match.sequence.flow.rules.victory.kills_flag" class="step-right"></InputNumber>
+                        </FormItem>
+                      </div>
+                      <div v-if="match.sequence.flow.rule === '5'">
+                        <Divider><strong>Player</strong></Divider>
+                        <FormItem label="Cards to Draw">
+                          <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.actors.player.library.draw"></InputNumber>
+                        </FormItem>
+                        <FormItem label="Extra Cards">
+                          <CardList 
+                            v-model="match.sequence.flow.actors.player.library.free"
+                            :cards="draw"
+                            :tiles="['Cards', 'Extra']" 
+                          />
+                        </FormItem>
+                        <Divider><strong>Ai</strong></Divider>
+                        <FormItem label="Cards to Draw">
+                          <InputNumber :max="9999" :min="0" v-model="match.sequence.flow.actors.ai.library.draw"></InputNumber>
+                        </FormItem>
+                        <FormItem label="Extra Cards">
+                          <CardList 
+                            v-model="match.sequence.flow.actors.ai.library.free"
+                            :cards="draw"
+                            :tiles="['Cards', 'Extra']" 
+                          />
+                        </FormItem>
+                      </div>
+                      <div v-if="match.sequence.flow.rule === '6'">
+                        <Divider><strong>General</strong></Divider>
+                        <FormItem label="Pathing">
+                          <Select v-model="match.sequence.flow.rules.deployment.pathing_force">
+                            <Option value="Random">Random</Option>
+                            <Option value="Left Path" >Left</Option>
+                            <Option value="Right Path" >Right</Option>
+                            <Option value="Forward Path" >Forward</Option>
+                          </Select>
+                        </FormItem>
+                        <Divider><strong>Player</strong></Divider>
+                        <FormItem label="Creep List">
+                          <CardList 
+                            v-model="match.sequence.flow.actors.player.creeps.list"
+                            :cards="creeps"
+                            :tiles="['Creeps', 'Deployment']"
+                          />
+                        </FormItem>
+                        <FormItem label="Creep Count">
+                          <InputNumber :max="100" :min="0" v-model="match.sequence.flow.actors.player.creeps.count"></InputNumber>
+                        </FormItem>
+                        <Divider><strong>Ai</strong></Divider>
+                        <FormItem label="Creep List">
+                          <CardList 
+                            v-model="match.sequence.flow.actors.ai.creeps.list"
+                            :cards="creeps"
+                            :tiles="['Creeps', 'Deployment']"
+                          />
+                        </FormItem>
+                        <FormItem label="Creep Count">
+                          <InputNumber :max="100" :min="0" v-model="match.sequence.flow.actors.ai.creeps.count"></InputNumber>
+                        </FormItem>
+                      </div>
+                    </div>
+                    <FormItem label="">
+                      <Button type="success" @click="addFlow(match)" v-if="match.sequence.flow.key === 0">Add Flow</Button>
+                      <Button type="success" @click="addFlow(match)" v-if="match.sequence.flow.key != 0">Edit Flow</Button>
+                      <Button type="info" @click="match.sequence.show = false" class="step-right">Cancel</Button>
+                    </FormItem>
+                  </Form>
+                </Modal>
+
+                <Row>
+                  <template v-for="flow in match.sequence.flows">
+                    <i-col :key="flow.key" span="8" style="padding: 5px;">
+                      <Card>
+                        <p slot="title">Turn {{flow.turn}} - Lane {{flow.lane}}</p>
+                        <Button slot="extra" type="info" @click="editFlow(match, flow.key)">Edit</Button>
+                        <Button slot="extra" type="error" @click="removeFlow(match, flow.key)" class="step-right">Remove</Button>
+                        <CellGroup>
+                          <Cell v-if="flow.mode == '1'" title="Mode" extra="Invoke Command" />
+                          <Cell v-if="flow.mode == '2'" title="Mode" extra="Change Rules" />
+                          <Cell v-if="flow.mode == '1' && flow.command == '1'" title="Command" extra="Player Quits" />
+                          <Cell v-if="flow.mode == '1' && flow.command == '2'" title="Command" extra="Ai Concedes" />
+                          <Cell v-if="flow.mode == '1' && flow.command == '3'" title="Command" extra="Load Match" />
+                          <Cell v-if="flow.mode == '1' && flow.command == '4'" title="Command" extra="Load Puzzle" />
+                          <Cell v-if="flow.mode == '2' && flow.rule == '1'" title="Rule" extra="Clock" />
+                          <Cell v-if="flow.mode == '2' && flow.rule == '2'" title="Rule" extra="Store" />
+                          <Cell v-if="flow.mode == '2' && flow.rule == '3'" title="Rule" extra="Combat" />
+                          <Cell v-if="flow.mode == '2' && flow.rule == '4'" title="Rule" extra="Victory" />
+                          <Cell v-if="flow.mode == '2' && flow.rule == '5'" title="Rule" extra="Library" />
+                          <Cell v-if="flow.mode == '2' && flow.rule == '6'" title="Rule" extra="Creeps" />
+                        </CellGroup>
+                      </Card>
+                    </i-col>
+                  </template>
+                </Row>
+              </div>
 
             </div>
           </Panel>
@@ -794,6 +806,14 @@ export default {
     },
     getMatchName(index) {
       return "Match " + (index + 1).toString();
+    },
+    previousStep(match) {
+      if(match.step > 0)
+        match.step--;
+    },
+    nextStep(match) {
+      if(match.step < 12)
+        match.step++;
     },
     addFlow(match) {
       let flow = match.sequence.flow;
