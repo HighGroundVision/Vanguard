@@ -89,7 +89,9 @@ export function exportPuzzle(puzzle) {
       section.rules["hero3_ai"] = match.ai.rules.flop.lane_3;
     }
     // Deployment - Creeps
-    section.rules["pathing_force"] = match.rules.deployment.pathing_force;
+    if( match.rules.deployment.pathing_force != "Random") {
+      section.rules["pathing_force"] = match.rules.deployment.pathing_force;
+    }
     section.rules["creeps_first_turn"] = match.player.rules.creeps.count;
     section.rules["creep_list"] = match.player.rules.creeps.list.map(_ => _.id).join();
     section.rules["creeps_first_turn_ai"] =  match.ai.rules.creeps.count;
@@ -183,22 +185,105 @@ export function exportPuzzle(puzzle) {
         let collection = match.sequence.flows.filter(_ => _.turn == flow[s].turn && _.lane == flow[s].lane);
         for (const _ of collection) {
           if(_.mode == "1") {
-            if(_.command == "1") {
+            if(_.command == "1") {  
+              // Player Quits
               events.push("quit");
-              continue;
-            } else if(_.command == "2") {
+            } else if(_.command == "2") { 
+              // Ai Concedes
               events.push("concommand dcg_opponent_concede");
-              continue;
-            } else if(_.command == "3") {
+            } else if(_.command == "3") { 
+              // Load Match
               events.push(`load_section part${_.commands.load_section}`);
-              continue;
-            } else if(_.command == "4") {
+            } else if(_.command == "4") { 
+              // Load Puzzle
               events.push(`load_puzzle ${_.commands.load_puzzle}`);
-              continue;
             }
           } else if(_.mode == "2") {
-            events.push("<action>");
-            continue;
+            if(_.rule == "1") { 
+              // Clock
+              let no_shotclock_value = _.rules.clock.no_shotclock ? "1" : "0";
+              events.push(`rule no_shotclock ${no_shotclock_value}`);
+
+              if(_.rules.clock.shotclock_base_time != 45) {
+                events.push(`rule shotclock_base_time ${_.rules.clock.shotclock_base_time}`);
+              }
+
+            } else if(_.rule == "2") { 
+              // Store
+              let store_enabled_value = _.rules.store.enabled ? "1" : "0";
+              events.push(`rule store_enabled ${store_enabled_value}`);
+
+              if(_.actors.player.store.secret != 0) {
+                events.push(`rule store_enabled ${_.actors.player.store.secret}`);
+              }
+              if(_.actors.ai.store.secret != 0) {
+                events.push(`rule store_enabled ${_.actors.ai.store.secret}`);
+              }
+
+            } else if(_.rule == "3") { 
+              // Combat
+              events.push(`rule ai_pass_chance_multiplier ${_.rules.combat.ai_pass_chance_multiplier}`);
+
+            } else if(_.rule == "4") { 
+              // Victory
+              if(_.rules.victory.gold_flag) {
+                events.push(`rule gold_victory ${_.rules.victory.gold_amount}`);
+              }
+
+              if(_.rules.victory.units_flag) {
+                events.push(`rule units_victory ${_.rules.victory.units_amount}`);
+              }
+
+              if(_.rules.victory.kills_flag) {
+                events.push(`rule kills_victory ${_.rules.victory.kills_amount}`);
+              }
+
+            } else if(_.rule == "5") { 
+              // Library
+
+              if(_.actors.player.library.draw != 0) {
+                events.push(`rule cards_per_turn ${_.actors.player.library.draw}`);
+              }
+              if(_.actors.ai.library.draw != 0) {
+                events.push(`rule cards_per_turn_ai ${_.actors.ai.library.draw}`);
+              }
+
+              if(_.actors.player.library.free.length > 0) {
+                let free_cards_list = _.actors.player.library.free.map(_ => _.id);
+                events.push(`rule free_cards_per_turn ${free_cards_list}`);
+              }
+              if(_.actors.ai.library.free.length > 0) {
+                let free_cards_list = _.actors.ai.library.free.map(_ => _.id);
+                events.push(`rule free_cards_per_turn_ai ${free_cards_list}`);
+              }
+              
+            } else if(_.rule == "6") { 
+              // Creeps
+              
+              if(_.rules.deployment.pathing_force != "Random") {
+                // TODO: figure out how to escape test values...
+                // events.push(`rule pathing_force `);
+              }
+
+              if(_.actors.player.creeps.list.length > 0) {
+                let list = _.actors.player.creeps.list.map(_ => _.id).join();
+                events.push(`rule creep_list ${list}`);
+              }
+              if(_.actors.player.creeps.count > 0) {
+                events.push(`rule creeps_per_turn ${_.actors.player.creeps.count}`);
+              }
+
+              if(_.actors.ai.creeps.list.length > 0) {
+                let list = _.actors.ai.creeps.list.map(_ => _.id).join();
+                events.push(`rule creep_list ${list}`);
+              }
+              if(_.actors.ai.creeps.count > 0) {
+                events.push(`rule creeps_per_turn_ai ${_.actors.ai.creeps.count}`);
+              }
+
+            } else {
+              events.push("<action>");
+            }
           }
         }
 
