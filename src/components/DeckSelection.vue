@@ -79,6 +79,8 @@ export default {
         return;
       }
 
+      code = code.replace("https://www.playartifact.com/d/", "");
+
       let sets = clone(cardsCollection.default);
       let deck = decodeDeck(code);
 
@@ -158,6 +160,7 @@ export default {
 
       let deck = clone(this.actor.deck);
       deck.key = uuidv4();
+      deck.code = deck.code.replace("https://www.playartifact.com/d/", "");
       this.actor.decks.push(deck);
 
       this.actor.deck.code = "";

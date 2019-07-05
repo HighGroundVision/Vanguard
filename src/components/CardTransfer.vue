@@ -33,12 +33,39 @@ export default {
     },
   },
   methods: {
-    onChange(newTargetKeys) {
-      this.selection.image = require('../assets/imgs/empty.png');
-      this.selection.collection = [];
-      let value = this.cards.filter(_ => newTargetKeys.includes(_.key) == true);
+    onChange(keys) {
+      let self = this;
+      self.selection.image = require('../assets/imgs/empty.png');
+      self.selection.collection = [];
+      let value = [];
+
+      // DELTA
+      let add = keys.filter(function(i) {return self.target.indexOf(i) < 0;});
+      let remove = self.target.filter(function(i) {return keys.indexOf(i) < 0;});
+
+      if(add.length > 0) {
+        // Convert add from key to card
+        let collection = this.cards.filter(_ => add.includes(_.key) == true);
+        value = this.value.concat(collection);
+      }
+
+      if(remove.length > 0) {
+        value = this.value.filter(_ => remove.includes(_.key) == false);
+      }
+
       this.$emit('input', value);
       this.$emit('on-change');
+
+      /*
+      for (const key of keys) {
+        for (const card of self.cards) {
+          if(card.key == key) {
+            value.push(card);
+          }
+        }
+      }
+      */
+      // let value = this.cards.filter(_ => newTargetKeys.includes(_.key) == true);
     },
     onSelectedChange(sourceSelectedKeys, targetSelectedKeys) {
       if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {

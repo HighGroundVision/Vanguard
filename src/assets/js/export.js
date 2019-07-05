@@ -119,12 +119,12 @@ export function exportPuzzle(puzzle) {
     section.rules["cards_first_turn_ai"] = match.ai.rules.library.draw;
     if(match.player.rules.library.order.length > 0) {
       section["deck_order_player"] =  {
-        draw: match.player.library.order.map(_ => _.id)
+        draw: match.player.rules.library.order.map(_ => _.id)
       };
     }
     if(match.ai.rules.library.order.length > 0) {
       section["deck_order_ai"] =  {
-        draw: match.ai.library.order.map(_ => _.id)
+        draw: match.ai.rules.library.order.map(_ => _.id)
       };
     }
     // Combat
