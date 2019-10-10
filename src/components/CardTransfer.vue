@@ -44,7 +44,6 @@ export default {
       let remove = self.target.filter(function(i) {return keys.indexOf(i) < 0;});
 
       if(add.length > 0) {
-        // Convert add from key to card
         let collection = this.cards.filter(_ => add.includes(_.key) == true);
         value = this.value.concat(collection);
       }
@@ -55,17 +54,6 @@ export default {
 
       this.$emit('input', value);
       this.$emit('on-change');
-
-      /*
-      for (const key of keys) {
-        for (const card of self.cards) {
-          if(card.key == key) {
-            value.push(card);
-          }
-        }
-      }
-      */
-      // let value = this.cards.filter(_ => newTargetKeys.includes(_.key) == true);
     },
     onSelectedChange(sourceSelectedKeys, targetSelectedKeys) {
       if (sourceSelectedKeys.length === 0 && targetSelectedKeys.length === 0) {
