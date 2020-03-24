@@ -24,7 +24,7 @@
       </Content>
       <Footer class="layout-footer-bar">
         <div>
-          © 2019 - High Ground Vision
+          © 2020 - High Ground Vision
         </div>
       </Footer>
     </Layout>

@@ -925,6 +925,9 @@ export default {
 </script>
 
 <style scoped>
+p {
+  font-size: 1.2em;
+}
 .float-right {
   float: right;
   margin: 3px;
